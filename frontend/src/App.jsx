@@ -1,14 +1,16 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import CheckAvailability from './pages/CheckAvailability';
 
 function App() {
   return (
-    <div className="App">
-      <div className="content">
-        <h1>Dalhousie University</h1>
-        <button>Check Availability</button>
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/check-availability" element={<CheckAvailability />} />
+      </Routes>
+    </Router>
   );
 }
 

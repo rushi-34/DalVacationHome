@@ -15,42 +15,49 @@ def lambda_handler(event, context):
     body = {}
     statusCode = 200
     headers = {
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
         "Content-Type": "application/json"
     }
-
+    
     try:
-        if(event['httpMethod']=='GET'):
+        if event['httpMethod'] == 'GET':
             print('Abhishek is in GET method!!')
             body = table.scan()
             body = body["Items"]
             print("ITEMS----")
             responseBody = []
             for items in body:
-                responseItems = [
-                    {'room_id': items['room_id'], 
-                    'room_feature': items['room_feature'], 
-                    'room_price': float(items['room_price']), 
-                    'room_type': items['room_type']}]
+                responseItems = {
+                    'room_id': items['room_id'],
+                    'room_feature': items['room_feature'],
+                    'room_price': float(items['room_price']),
+                    'room_type': items['room_type']
+                }
                 responseBody.append(responseItems)
             body = responseBody
+            print("GET Return Body:", body)
         
         elif(event['httpMethod']=='POST'):
             print('Abhishek is in POST method!!')
             print("POSTING", event)
-            body = event['body']
-            print("POSTING BODY", body)
+            current_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            print(current_time)
+            body = json.loads(event['body'])
+            print("BODY", body)
             id = uuid.uuid4().hex[:4] # Generating a unique 4 digit code
-            print("Id:", id)
             
             try:
-                # Get the current time in epoch second format
-                current_time = int(datetime.now().timestamp())
                 item = {
                     'room_id': id,
-                    'room_feature': body['room_feature'],
-                    'room_price': body['room_price'],
-                    'room_type': body['room_type']
+                    'room_feature': body.get("room_feature"),
+                    'room_price': body.get("room_price"),
+                    'room_type': body.get("room_type"),
+                    'created_time': current_time
                 }
+                print(item)
+                
                 table.put_item(Item=item)
                 body = item
                 print("Item inserted successfully")
@@ -59,9 +66,7 @@ def lambda_handler(event, context):
                 print(f"Error found in Inserting an Item, :{e}")
                 raise
             
-            # dynamodb.put_item(TableName='fruitSalad', Item={'fruitName':{'S':'Banana'},'key2':{'N':'value2'}})
-
-        
+            
     except KeyError:
         statusCode = 400
         body = 'Error...'
@@ -69,9 +74,7 @@ def lambda_handler(event, context):
     body = json.dumps(body)
     res = {
         "statusCode": statusCode,
-        "headers": {
-            "Content-Type": "application/json"
-        },
+        "headers": headers,
         "body": body
     }
     return res
