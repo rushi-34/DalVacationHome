@@ -24,10 +24,8 @@ def lambda_handler(event, context):
     
     try:
         if event['httpMethod'] == 'GET':
-            # print('Abhishek is in GET method!!')
             body = table.scan()
             body = body["Items"]
-            # print("ITEMS----")
             responseBody = []
             for items in body:
                 responseItems = {
@@ -38,17 +36,11 @@ def lambda_handler(event, context):
                 }
                 responseBody.append(responseItems)
             body = responseBody
-            # print("GET Return Body:", body)
         
         elif(event['httpMethod']=='POST'):
-            # print('Abhishek is in POST method!!')
-            # print("POSTING", event)
             current_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            # print(current_time)
             body = json.loads(event['body'])
-            # print("BODY", body)
             id = uuid.uuid4().hex[:4] # Generating a unique 4 digit code
-            
             try:
                 item = {
                     'room_id': id,
@@ -58,8 +50,6 @@ def lambda_handler(event, context):
                     'created_time': current_time,
                     'last_updated': current_time
                 }
-                # print(item)
-                
                 table.put_item(Item=item)
                 body = item
                 print("Item inserted successfully")
@@ -74,12 +64,9 @@ def lambda_handler(event, context):
             body = json.loads(event['body'])
             print('body', body)
             try:
-                # Search for that item
                 print('inside try')
                 print("EVENT: ", event)
-                
                 id = event['pathParameters']['room_id']
-                
                 item = {
                     'room_id': id,
                     'room_feature': body.get("room_feature"),
@@ -88,7 +75,6 @@ def lambda_handler(event, context):
                     'created_time': body.get("created_time"),
                     'last_updated': current_time
                 }
-                
                 table.update_item(
                     Key = {
                         'room_id': id
