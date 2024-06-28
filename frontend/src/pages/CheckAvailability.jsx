@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 
 function CheckAvailability() {
   const [rooms, setRooms] = useState([]);
@@ -9,36 +10,40 @@ function CheckAvailability() {
       .then(data => {
         console.log('Fetched data:', data); // Log the data to the console
         setRooms(data);
-    })
-    .catch(error => console.error('Error fetching data:', error));
+      })
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white p-4">
       <h1 className="text-4xl font-bold mb-6">Dalhousie University</h1>
       <div className="w-full max-w-4xl">
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b">Room ID</th>
-              <th className="py-2 px-4 border-b">Room Type</th>
-              <th className="py-2 px-4 border-b">Room Feature</th>
-              <th className="py-2 px-4 border-b">Room Price</th>
-              <th className="py-2 px-4 border-b">Check Availability</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Room ID</TableCell>
+              <TableCell>Room Type</TableCell>
+              <TableCell>Room Feature</TableCell>
+              <TableCell>Room Price</TableCell>
+              <TableCell>Room Booking</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {rooms.map((room, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b">{room.room_id}</td>
-                <td className="py-2 px-4 border-b">{room.room_type}</td>
-                <td className="py-2 px-4 border-b">{room.room_feature}</td>
-                <td className="py-2 px-4 border-b">{room.room_price}</td>
-                <td className="py-2 px-4 border-b">{room.check_availability ? 'Available' : 'Unavailable'}</td>
-              </tr>
+              <TableRow key={index}>
+                <TableCell>{room.room_id}</TableCell>
+                <TableCell>{room.room_type}</TableCell>
+                <TableCell>{room.room_feature}</TableCell>
+                <TableCell>{room.room_price}</TableCell>
+                <TableCell>
+                  <Button variant="contained" color="primary" size="small">
+                    Book
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
