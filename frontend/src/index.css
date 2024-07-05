@@ -1,20 +1,6 @@
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-table {
-  width: 100%;
-  border-collapse: collapse;
+* {
+  box-sizing: border-box
 }
-
-th, td {
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #ddd;
+body {
+  margin: 0;
 }
-
-th {
-  background-color: #f4f4f4;
-}
-

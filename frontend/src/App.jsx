@@ -1,22 +1,88 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import CheckAvailability from './pages/CheckAvailability';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import React, { useContext } from "react";
+import { CircularProgress, ThemeProvider, Box } from "@mui/material";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { theme } from "./theme";
+import SignIn from "./SignIn";
+import Signup from "./Signup";
+import ClientDashboard from "./pages/ClientDashboard";
+import AgentDashboard from "./pages/AgentDashboard";
+import { AuthenticationContext } from "./ContextProvider";
 
+const PrivateRoute = ({ children, isAuthenticated }) => {
+    return isAuthenticated ? children : <Navigate to="/login" />;
+};
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/check-availability" element={<CheckAvailability />} />
-      </Routes>
-    </Router>
-  );
-}
+const AppRouter = ({ loggedInRole }) => {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
+                    }
+                />
+                <Route path="/login" element={<SignIn />} />
+                <Route path="/register" element={<Signup />} />
+                <Route
+                    path="/app"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            {loggedInRole === "client" ? (
+                                <Navigate to="/app/client" />
+                            ) : (
+                                <Navigate to="/app/agent" />
+                            )}
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/app/client"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            <ClientDashboard />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/app/agent"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            <AgentDashboard />
+                        </PrivateRoute>
+                    }
+                />
+            </Routes>
+        </BrowserRouter>
+    );
+};
+
+const App = () => {
+    const { loading, userRole } = useContext(AuthenticationContext);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    return (
+        <>
+            <AppRouter loggedInRole={userRole} />
+            <ToastContainer />
+        </>
+    );
+};
 
 export default App;
