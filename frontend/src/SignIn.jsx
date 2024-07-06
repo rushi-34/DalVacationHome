@@ -145,7 +145,7 @@ const SignIn = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box sx={{ maxWidth: 400, margin: 'auto' }}>
-                        <Typography variant="h4" align="center" gutterBottom>
+                        <Typography variant="h4" align="center" gutterBottom color="red">
                             Login
                         </Typography>
                         {formState === 0 && (

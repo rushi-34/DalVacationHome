@@ -85,7 +85,6 @@ const Signup = () => {
                 }
                 toast.success("User created successfully");
                 
-                // Send the email notification
                 await sendEmailNotification(data.email);
     
                 setTimeout(() => {
@@ -117,10 +116,25 @@ const Signup = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box sx={{ position: 'relative', p: 3 }}>
-                        <Typography variant="h4" align="center" gutterBottom>
+                        <Typography variant="h4" align="center" gutterBottom color="red">
                             Create an account
                         </Typography>
                         <form onSubmit={handleSubmit(onSubmit)}>
+                        <Box sx={{ my: 2 }}>
+                                <Controller
+                                    name="role"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControl fullWidth error={!!errors.role}>
+                                            <InputLabel>Role</InputLabel>
+                                            <Select label="Role" {...field}>
+                                                <MenuItem value="client">Property Buyer</MenuItem>
+                                                <MenuItem value="agent">Property Agent</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Box>
                             <Box sx={{ my: 2 }}>
                                 <Controller
                                     name="username"
@@ -233,21 +247,7 @@ const Signup = () => {
                                     )}
                                 />
                             </Box>
-                            <Box sx={{ my: 2 }}>
-                                <Controller
-                                    name="role"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControl fullWidth error={!!errors.role}>
-                                            <InputLabel>Role</InputLabel>
-                                            <Select label="Role" {...field}>
-                                                <MenuItem value="client">Property Buyer</MenuItem>
-                                                <MenuItem value="agent">Property Agent</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Box>
+                    
                             <Box sx={{ my: 3 }}>
                                 <CustomButton fullWidth variant="contained" size="large" type="submit">
                                     Sign Up
