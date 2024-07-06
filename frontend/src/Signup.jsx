@@ -38,7 +38,33 @@ const Signup = () => {
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(validationSchema),
     });
-
+    const sendEmailNotification = async (email) => {
+        const notificationEndpoint = 'https://thbtqi9ka6.execute-api.us-east-1.amazonaws.com/send-email';
+        const payload = {
+            email: email,
+            subject: 'Dal Vacation Home',
+            body: 'You have been successfully registered!'
+        };
+    
+        try {
+            const response = await fetch(notificationEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to send email notification');
+            }
+    
+            console.log('Email notification sent successfully');
+        } catch (error) {
+            console.error('Error sending email notification:', error);
+        }
+    };
+    
     const onSubmit = (data) => {
         const userPool = getUserPool();
         userPool.signUp(
@@ -52,18 +78,23 @@ const Signup = () => {
                 { Name: "caesar_key", Value: data.caesar_key.toString() },
                 { Name: "security_questions", Value: JSON.stringify({ q_id: data.security_question, answer: data.security_answer }) },
             ],
-            (err, result) => {
+            async (err, result) => {
                 if (err) {
                     console.log(err);
                     return;
                 }
                 toast.success("User created successfully");
+                
+                // Send the email notification
+                await sendEmailNotification(data.email);
+    
                 setTimeout(() => {
                     window.location.href = "/login";
                 }, 1000);
             }
         );
     };
+    
 
     if (isLoading) {
         return (
