@@ -13,11 +13,13 @@ def support_chat(cloud_event):
     # Extracting payload data from pub/sub message.
     booking_id = data['booking_id']
     message = data['message']
+    isAgent = data['isAgent']
 
     # Creating payload to invoke Lambda function
     payload = {
         'booking_id': booking_id,
-        'message': message
+        'message': message,
+        'agent': isAgent
     }
 
     try:
