@@ -38,7 +38,33 @@ const Signup = () => {
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(validationSchema),
     });
-
+    const sendEmailNotification = async (email) => {
+        const notificationEndpoint = 'https://thbtqi9ka6.execute-api.us-east-1.amazonaws.com/send-email';
+        const payload = {
+            email: email,
+            subject: 'Dal Vacation Home',
+            body: 'You have been successfully registered!'
+        };
+    
+        try {
+            const response = await fetch(notificationEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to send email notification');
+            }
+    
+            console.log('Email notification sent successfully');
+        } catch (error) {
+            console.error('Error sending email notification:', error);
+        }
+    };
+    
     const onSubmit = (data) => {
         const userPool = getUserPool();
         userPool.signUp(
@@ -52,18 +78,22 @@ const Signup = () => {
                 { Name: "caesar_key", Value: data.caesar_key.toString() },
                 { Name: "security_questions", Value: JSON.stringify({ q_id: data.security_question, answer: data.security_answer }) },
             ],
-            (err, result) => {
+            async (err, result) => {
                 if (err) {
                     console.log(err);
                     return;
                 }
                 toast.success("User created successfully");
+                
+                await sendEmailNotification(data.email);
+    
                 setTimeout(() => {
                     window.location.href = "/login";
                 }, 1000);
             }
         );
     };
+    
 
     if (isLoading) {
         return (
@@ -86,10 +116,25 @@ const Signup = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box sx={{ position: 'relative', p: 3 }}>
-                        <Typography variant="h4" align="center" gutterBottom>
+                        <Typography variant="h4" align="center" gutterBottom color="red">
                             Create an account
                         </Typography>
                         <form onSubmit={handleSubmit(onSubmit)}>
+                        <Box sx={{ my: 2 }}>
+                                <Controller
+                                    name="role"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControl fullWidth error={!!errors.role}>
+                                            <InputLabel>Role</InputLabel>
+                                            <Select label="Role" {...field}>
+                                                <MenuItem value="client">Property Buyer</MenuItem>
+                                                <MenuItem value="agent">Property Agent</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Box>
                             <Box sx={{ my: 2 }}>
                                 <Controller
                                     name="username"
@@ -202,21 +247,7 @@ const Signup = () => {
                                     )}
                                 />
                             </Box>
-                            <Box sx={{ my: 2 }}>
-                                <Controller
-                                    name="role"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <FormControl fullWidth error={!!errors.role}>
-                                            <InputLabel>Role</InputLabel>
-                                            <Select label="Role" {...field}>
-                                                <MenuItem value="client">Property Buyer</MenuItem>
-                                                <MenuItem value="agent">Property Agent</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Box>
+                    
                             <Box sx={{ my: 3 }}>
                                 <CustomButton fullWidth variant="contained" size="large" type="submit">
                                     Sign Up
