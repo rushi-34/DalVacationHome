@@ -9,6 +9,10 @@ import Signup from "./Signup";
 import ClientDashboard from "./pages/ClientDashboard";
 import AgentDashboard from "./pages/AgentDashboard";
 import { AuthenticationContext } from "./ContextProvider";
+import NavBar from "./components/Navbar";
+import IndexPage from "./pages/IndexPage";
+import RoomDetailsPage from "./pages/RoomDetailsPage";
+import AddRoom from "./pages/AddRoom";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -17,8 +21,20 @@ const PrivateRoute = ({ children, isAuthenticated }) => {
 const AppRouter = ({ loggedInRole }) => {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route
+        <Routes>
+            <Route
+                path="/"
+                element={
+                    <> 
+                        <NavBar />
+                        <IndexPage />
+                    </>
+                }
+            />
+        <Route path="/room/:roomId" element={<><NavBar/><RoomDetailsPage /></>} />
+        <Route path="/add-room" element={<><NavBar/><AddRoom /></>} />
+        
+                {/* <Route
                     path="/"
                     element={
                         !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
@@ -53,7 +69,7 @@ const AppRouter = ({ loggedInRole }) => {
                             <AgentDashboard />
                         </PrivateRoute>
                     }
-                />
+                /> */}
             </Routes>
         </BrowserRouter>
     );
