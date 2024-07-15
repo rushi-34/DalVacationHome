@@ -9,6 +9,7 @@ import Signup from "./Signup";
 import ClientDashboard from "./pages/ClientDashboard";
 import AgentDashboard from "./pages/AgentDashboard";
 import { AuthenticationContext } from "./ContextProvider";
+import SupportChat from "./pages/SupportChat";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -51,6 +52,14 @@ const AppRouter = ({ loggedInRole }) => {
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
                             <AgentDashboard />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/app/support"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            <SupportChat />
                         </PrivateRoute>
                     }
                 />
