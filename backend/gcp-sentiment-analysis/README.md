@@ -1,5 +1,7 @@
 # Sentiment Analysis Cloud Function
 
+**Trigger URL: https://us-central1-serverless-term.cloudfunctions.net/sentiment-analysis**
+
 This Cloud Function uses Google Cloud Natural Language API to perform sentiment analysis on multiple feedback messages and provide an overall sentiment, score, and adjective (good, bad, or neutral) based on the aggregated results.
 
 ## Setup Steps
@@ -28,6 +30,9 @@ This Cloud Function uses Google Cloud Natural Language API to perform sentiment 
    - Replace `analyzeSentiments` with your preferred function name.
    
 4. **Testing Payload:**
+
+   _Trigger URL:
+   https://us-central1-serverless-term.cloudfunctions.net/sentiment-analysis_
 
    Use the following JSON payload for testing the Cloud Function:
    ```json
