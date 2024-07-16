@@ -11,7 +11,6 @@ tableName = 'dalvac-rooms'
 
 
 def lambda_handler(event, context):
-    print('Abhishek is here!!')
     print("Event:", event)
     body = {}
     statusCode = 200
