@@ -13,6 +13,7 @@ import NavBar from "./components/Navbar";
 import IndexPage from "./pages/IndexPage";
 import RoomDetailsPage from "./pages/RoomDetailsPage";
 import AddRoom from "./pages/AddRoom";
+import EditRoom from "./pages/EditRoom";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -33,6 +34,7 @@ const AppRouter = ({ loggedInRole }) => {
             />
         <Route path="/room/:roomId" element={<><NavBar/><RoomDetailsPage /></>} />
         <Route path="/add-room" element={<><NavBar/><AddRoom /></>} />
+        <Route path="/edit-room/:id" element={<EditRoom />} />
         
                 {/* <Route
                     path="/"

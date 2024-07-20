@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
-  Box, Typography, Grid, Paper, Button, CircularProgress, Chip
+  Box, Typography, Grid, Paper, Button, CircularProgress
 } from '@mui/material';
 import { FaHome, FaLocationArrow, FaEdit, FaTrash, FaBed } from "react-icons/fa";
+import { toast } from 'react-toastify';
 
 const LAMBDA_URL = 'https://qlpywupcdaqtiibipylxwifzhq0rfxop.lambda-url.us-east-1.on.aws/';
+const DELETE_LAMBDA_URL = 'https://jugqhcf4gugo46i2vmynwbxswy0uwohw.lambda-url.us-east-1.on.aws/';
 
 function IndexPage() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -22,7 +23,7 @@ function IndexPage() {
         setLoading(false);
       } catch (err) {
         console.error('Error fetching rooms:', err);
-        setError('Failed to load rooms. Please try again later.');
+        toast.error('Failed to load rooms. Please try again later.');
         setLoading(false);
       }
     };
@@ -30,18 +31,27 @@ function IndexPage() {
     fetchRooms();
   }, []);
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this room?')) {
+      try {
+        await axios.post(DELETE_LAMBDA_URL, { id });
+        setRooms(rooms.filter(room => room.id !== id));
+        toast.success('Room deleted successfully');
+      } catch (error) {
+        console.error('Error deleting room:', error);
+        toast.error('Failed to delete room. Please try again.');
+      }
+    }
+  };
+
+const handleEdit = (id) => {
+  navigate(`/edit-room/${id}`);
+};
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ padding: 2 }}>
-        <Typography color="error">{error}</Typography>
       </Box>
     );
   }
@@ -83,7 +93,7 @@ function IndexPage() {
                     <Button 
                       variant="outlined"
                       startIcon={<FaEdit />}
-                      onClick={() => navigate(`/room/${room.id}`)}
+                      onClick={() => handleEdit(room.id)}
                       sx={{ 
                         borderColor: '#2196f3',
                         color: '#2196f3',
@@ -98,7 +108,7 @@ function IndexPage() {
                     <Button 
                       variant="outlined"
                       startIcon={<FaTrash />}
-                      onClick={() => navigate(`/room/${room.id}`)}
+                      onClick={() => handleDelete(room.id)}
                       sx={{ 
                         borderColor: '#f44336',
                         color: '#f44336',
