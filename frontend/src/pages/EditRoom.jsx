@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   Box,
   Typography,
@@ -12,23 +13,39 @@ import {
   Grid,
   Paper,
   Chip,
+  CircularProgress,
 } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
+const GET_ROOM_URL = 'https://2aortemmzjhlyqzknj3lnhkpjq0nmfmh.lambda-url.us-east-1.on.aws/';
+const UPDATE_ROOM_URL = 'https://6mokcyyqngttiluobsekioccra0wnoqk.lambda-url.us-east-1.on.aws/';
+
 const EditRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [roomData, setRoomData] = useState({
-    roomNumber: '',
-    roomType: '',
-    maxGuests: '',
-    price: '',
-    amenities: [],
-  });
-
+  const [roomData, setRoomData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [newAmenity, setNewAmenity] = useState('');
+
   const roomTypes = ['Normal Room', 'Suite', 'Deluxe', 'Super-Deluxe'];
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      try {
+        const response = await axios.post(GET_ROOM_URL, { id });
+        const fetchedRoomData = response.data;
+        setRoomData(fetchedRoomData);
+      } catch (error) {
+        console.error('Error fetching room:', error);
+        toast.error('Failed to load room data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoom();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,13 +66,36 @@ const EditRoom = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Editing room:', id);
-    console.log('Updated room data:', roomData);
-    toast.success('Room edited successfully (simulated)');
-    navigate('/');
+    try {
+      const response = await axios.post(UPDATE_ROOM_URL, {
+        id: id,
+        roomType: roomData.roomType,
+        maxGuests: roomData.maxGuests,
+        price: roomData.price,
+        amenities: roomData.amenities
+      });
+      console.log('Room updated:', response.data);
+      toast.success('Room updated successfully');
+      navigate('/');
+    } catch (error) {
+      console.error('Error updating room:', error);
+      toast.error('Failed to update room');
+    }
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!roomData) {
+    return <Typography>No room data available.</Typography>;
+  }
 
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 600, margin: 'auto', mt: 4 }}>
@@ -70,16 +110,20 @@ const EditRoom = () => {
               label="Room Number"
               name="roomNumber"
               value={roomData.roomNumber}
-              onChange={handleInputChange}
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel>Room Type</InputLabel>
+              <InputLabel id="room-type-label">Room Type</InputLabel>
               <Select
+                labelId="room-type-label"
                 name="roomType"
                 value={roomData.roomType}
                 onChange={handleInputChange}
+                label="Room Type"
               >
                 {roomTypes.map((type) => (
                   <MenuItem key={type} value={type}>
@@ -110,9 +154,6 @@ const EditRoom = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="subtitle1" gutterBottom>
-              Amenities
-            </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <TextField
                 fullWidth
