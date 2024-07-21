@@ -15,11 +15,16 @@ function IndexPage() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const sortRoomsByNumber = (a, b) => {
+    return a.roomNumber.localeCompare(b.roomNumber, undefined, { numeric: true });
+  };
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const response = await axios.get(LAMBDA_URL);
-        setRooms(response.data);
+        const sortedRooms = response.data.sort(sortRoomsByNumber);
+        setRooms(sortedRooms);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching rooms:', err);
@@ -35,7 +40,8 @@ function IndexPage() {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
         await axios.post(DELETE_LAMBDA_URL, { id });
-        setRooms(rooms.filter(room => room.id !== id));
+        const updatedRooms = rooms.filter(room => room.id !== id).sort(sortRoomsByNumber);
+        setRooms(updatedRooms);
         toast.success('Room deleted successfully');
       } catch (error) {
         console.error('Error deleting room:', error);
@@ -44,9 +50,9 @@ function IndexPage() {
     }
   };
 
-const handleEdit = (id) => {
-  navigate(`/edit-room/${id}`);
-};
+  const handleEdit = (id) => {
+    navigate(`/app/agent/edit-room/${id}`);
+  };
 
   if (loading) {
     return (

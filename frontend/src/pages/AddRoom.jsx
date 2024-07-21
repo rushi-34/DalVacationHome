@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -21,6 +22,7 @@ const UPLOAD_IMAGE_URL = 'https://r2gzzdiz7wkh2i2l5g2btfqcni0dnwyv.lambda-url.us
 const ADD_ROOM_URL = 'https://423mzrknqx7gj4otyur2ur2dbi0nnzqg.lambda-url.us-east-1.on.aws/';
 
 const AddRoom = () => {
+const navigate = useNavigate();
   const [roomData, setRoomData] = useState({
     photo: null,
     roomNumber: '',
@@ -87,7 +89,7 @@ const AddRoom = () => {
       }
 
       toast.success('Room added successfully');
-      // Reset form or navigate to another page
+      navigate('/');
       setRoomData({
         photo: null,
         roomNumber: '',
@@ -143,15 +145,20 @@ const AddRoom = () => {
               name="roomNumber"
               value={roomData.roomNumber}
               onChange={handleInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel>Room Type</InputLabel>
+              <InputLabel id="room-type-label" shrink>Room Type</InputLabel>
               <Select
+                labelId="room-type-label"
                 name="roomType"
                 value={roomData.roomType}
                 onChange={handleInputChange}
+                label="Room Type"
               >
                 {roomTypes.map((type) => (
                   <MenuItem key={type} value={type}>
@@ -169,6 +176,9 @@ const AddRoom = () => {
               type="number"
               value={roomData.maxGuests}
               onChange={handleInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -179,24 +189,27 @@ const AddRoom = () => {
               type="number"
               value={roomData.price}
               onChange={handleInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="subtitle1" gutterBottom>
-              Amenities
-            </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <TextField
                 fullWidth
                 label="Add Amenity"
                 value={newAmenity}
                 onChange={(e) => setNewAmenity(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
               <Button variant="contained" onClick={handleAddAmenity} sx={{ ml: 1 }}>
                 Add
               </Button>
             </Box>
-            <div className="mb-3 space-x-2">
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {roomData.amenities.map((amenity) => (
                 <Chip
                   key={amenity}
@@ -206,7 +219,7 @@ const AddRoom = () => {
                   sx={{ m: 0.5 }}
                 />
               ))}
-            </div>
+            </Box>
           </Grid>
           <Grid item xs={12}>
             <Button 

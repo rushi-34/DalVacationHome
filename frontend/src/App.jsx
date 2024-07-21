@@ -22,21 +22,8 @@ const PrivateRoute = ({ children, isAuthenticated }) => {
 const AppRouter = ({ loggedInRole }) => {
     return (
         <BrowserRouter>
-        <Routes>
-            <Route
-                path="/"
-                element={
-                    <> 
-                        <NavBar />
-                        <IndexPage />
-                    </>
-                }
-            />
-        <Route path="/room/:roomId" element={<><NavBar/><RoomDetailsPage /></>} />
-        <Route path="/add-room" element={<><NavBar/><AddRoom /></>} />
-        <Route path="/edit-room/:id" element={<EditRoom />} />
-        
-                {/* <Route
+            <Routes>
+                <Route
                     path="/"
                     element={
                         !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
@@ -64,7 +51,7 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
-                <Route
+                {/* <Route
                     path="/app/agent"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
@@ -72,10 +59,43 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 /> */}
+                {/* New routes for property agent */}
+                {loggedInRole === "agent" && (
+                    <>
+                        <Route 
+                            path="/app/agent" 
+                            element={
+                                <PrivateRoute isAuthenticated={loggedInRole}>
+                                    <NavBar />
+                                    <IndexPage />
+                                </PrivateRoute>
+                            } 
+                        />
+                        <Route 
+                            path="/app/agent/add-room" 
+                            element={
+                                <PrivateRoute isAuthenticated={loggedInRole}>
+                                    <NavBar />
+                                    <AddRoom />
+                                </PrivateRoute>
+                            } 
+                        />
+                        <Route 
+                            path="app/agent/edit-room/:id" 
+                            element={
+                                <PrivateRoute isAuthenticated={loggedInRole}>
+                                    <NavBar />
+                                    <EditRoom />
+                                </PrivateRoute>
+                            } 
+                        />
+                    </>
+                )}
             </Routes>
         </BrowserRouter>
     );
 };
+
 
 const App = () => {
     const { loading, userRole } = useContext(AuthenticationContext);
