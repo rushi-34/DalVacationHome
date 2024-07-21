@@ -14,6 +14,7 @@ import IndexPage from "./pages/IndexPage";
 import RoomDetailsPage from "./pages/RoomDetailsPage";
 import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
+import SupportChat from "./pages/SupportChat";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -48,6 +49,14 @@ const AppRouter = ({ loggedInRole }) => {
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
                             <ClientDashboard />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/app/support"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            <SupportChat />
                         </PrivateRoute>
                     }
                 />
@@ -91,6 +100,7 @@ const AppRouter = ({ loggedInRole }) => {
                         />
                     </>
                 )}
+     
             </Routes>
         </BrowserRouter>
     );
