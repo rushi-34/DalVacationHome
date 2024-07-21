@@ -14,6 +14,7 @@ import IndexPage from "./pages/IndexPage";
 import RoomDetailsPage from "./pages/RoomDetailsPage";
 import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
+import ClientHome from "./pages/ClientHome";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -22,20 +23,38 @@ const PrivateRoute = ({ children, isAuthenticated }) => {
 const AppRouter = ({ loggedInRole }) => {
     return (
         <BrowserRouter>
-        <Routes>
-            <Route
-                path="/"
-                element={
-                    <> 
-                        <NavBar />
-                        <IndexPage />
-                    </>
-                }
-            />
-        <Route path="/room/:roomId" element={<><NavBar/><RoomDetailsPage /></>} />
-        <Route path="/add-room" element={<><NavBar/><AddRoom /></>} />
-        <Route path="/edit-room/:id" element={<EditRoom />} />
-        
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <>
+                            {/* <NavBar />
+                            <IndexPage /> */}
+                            {/* <ClientDashboard /> */}
+                            <ClientHome />
+
+                        </>
+                    }
+                />
+                <Route path="/room/:roomId" element={<><NavBar /><RoomDetailsPage /></>} />
+                <Route path="/add-room" element={<><NavBar /><AddRoom /></>} />
+                <Route path="/edit-room/:id" element={<EditRoom />} />
+                <Route
+                    path="/app/client"
+                    element={
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            <ClientDashboard />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/"
+                    element={
+                        !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
+                    }
+                />
+                <Route path="/login" element={<SignIn />} />
+
                 {/* <Route
                     path="/"
                     element={
