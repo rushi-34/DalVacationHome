@@ -5,7 +5,7 @@ import NavBar from '../components/Navbar';
 import DateSelection from '../components/DateSelection';
 import RoomList from '../components/RoomList';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchRooms, bookRoom } from '../api/api';
+import { fetchRooms, bookRoom, formatDate } from '../api/api';
 import { currentUser } from '../api/api'; // Import the currentUser function from api.js
 import BookingDrawer from '../components/BookingDrawer';
 
@@ -67,6 +67,13 @@ const ClientHome = () => {
                         <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: 'indigo' }}>
                             Check Availability
                         </Typography>
+
+                        {/* <Button
+                            variant="outlined"
+                            sx={{ color: 'purple' }}
+                        >
+
+                        </Button> */}
                         <Button
                             variant="outlined"
                             sx={{ color: 'purple' }}

@@ -63,6 +63,6 @@ export const bookRoom = async (payload) => {
     }
 };
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
     return date.format('MM-DD-YYYY'); // Format date as MM-DD-YYYY
 };
