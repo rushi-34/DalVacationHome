@@ -28,9 +28,13 @@ const AppRouter = ({ loggedInRole }) => {
                 <Route
                     path="/"
                     element={
-                        <>
-                            <ClientHome />
-                        </>
+                        <PrivateRoute isAuthenticated={loggedInRole}>
+                            {loggedInRole === "client" ? (
+                                <Navigate to="/app/client" />
+                            ) : (
+                                <Navigate to="/app/agent" />
+                            )}
+                        </PrivateRoute>
                     }
                 />
                 <Route path="/room/:roomId" element={<><NavBar /><RoomDetailsPage /></>} />
@@ -40,7 +44,7 @@ const AppRouter = ({ loggedInRole }) => {
                     path="/app/client"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
-                            <ClientDashboard />
+                            <ClientHome />
                         </PrivateRoute>
                     }
                 />
@@ -52,34 +56,13 @@ const AppRouter = ({ loggedInRole }) => {
                 />
                 <Route path="/login" element={<SignIn />} />
 
-                {/* <Route
+                <Route
                     path="/"
                     element={
                         !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
                     }
                 />
-                <Route path="/login" element={<SignIn />} />
                 <Route path="/register" element={<Signup />} />
-                <Route
-                    path="/app"
-                    element={
-                        <PrivateRoute isAuthenticated={loggedInRole}>
-                            {loggedInRole === "client" ? (
-                                <Navigate to="/app/client" />
-                            ) : (
-                                <Navigate to="/app/agent" />
-                            )}
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/app/client"
-                    element={
-                        <PrivateRoute isAuthenticated={loggedInRole}>
-                            <ClientDashboard />
-                        </PrivateRoute>
-                    }
-                />
                 <Route
                     path="/app/support"
                     element={
@@ -88,6 +71,7 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
+                {/* 
                 {/* <Route
                     path="/app/agent"
                     element={
