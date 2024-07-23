@@ -1,134 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    Grid,
-    Paper,
-    Typography
-} from '@mui/material';
-import { FaHome, FaLocationArrow, FaBed } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Container, Box, Typography, Button } from '@mui/material';
 import { toast } from 'react-toastify';
 import NavBar from '../components/Navbar';
+import DateSelection from '../components/DateSelection';
+import RoomList from '../components/RoomList';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { fetchRooms, bookRoom } from '../api/api';
+import { currentUser } from '../api/api'; // Import the currentUser function from api.js
+import BookingDrawer from '../components/BookingDrawer';
 
-// const LAMBDA_URL = ' https://0vdot0tejk.execute-api.us-east-1.amazonaws.com/prod/room';
-const LAMBDA_URL = import.meta.env.VITE_GET_ROOMS_LAMBDA_URL;
-const UNSPLASH_API_URL = import.meta.env.VITE_UNSPLASH_API_URL;
-const UNSPLASH_API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
+const ClientHome = () => {
+    const [rooms, setRooms] = useState([]); // State variable to store the list of rooms
+    const [loading, setLoading] = useState(false); // State variable to indicate if data is being loaded
+    const [checkInDate, setCheckInDate] = useState(null); // State variable to store the check-in date
+    const [checkOutDate, setCheckOutDate] = useState(null); // State variable to store the check-out date
+    const [availabilityChecked, setAvailabilityChecked] = useState(false); // State variable to indicate if availability has been checked
+    const [drawerOpen, setDrawerOpen] = useState(false); // State variable to indicate if the booking drawer is open
 
-function ClientHome() {
-    const navigate = useNavigate();
-    const [rooms, setRooms] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchRooms = async () => {
+    // Method to handle checking availability of rooms
+    const handleCheckAvailability = async () => {
+        if (checkInDate && checkOutDate) {
+            setLoading(true);
             try {
-                const response = await axios.get(LAMBDA_URL);
-                const roomsData = response.data;
-
-                const roomsWithPhotos = await Promise.all(
-                    roomsData.map(async (room) => {
-                        const photoUrl = await fetchPhoto();
-                        return { ...room, photoUrl };
-                    })
-                );
-
-                setRooms(roomsWithPhotos);
-                setLoading(false);
+                const roomsData = await fetchRooms(checkInDate, checkOutDate); // Fetch rooms data from the API
+                setRooms(roomsData); // Update the rooms state variable with the fetched data
+                setAvailabilityChecked(true); // Set availabilityChecked to true to indicate availability has been checked
             } catch (err) {
-                console.error('Error fetching rooms:', err);
-                toast.error('Failed to load rooms. Please try again later.');
-                setLoading(false);
+                toast.error('Failed to load rooms. Please try again later.'); // Display an error toast if fetching rooms fails
+            } finally {
+                setLoading(false); // Set loading to false after fetching rooms data
             }
-        };
-
-        const fetchPhoto = async () => {
-            try {
-                const response = await axios.get(UNSPLASH_API_URL, {
-                    params: { query: 'Mountain room view', client_id: UNSPLASH_API_KEY, per_page: 1 }
-                });
-                return response.data.results[0]?.urls.small || 'https://via.placeholder.com/200';
-            } catch (err) {
-                console.error('Error fetching photo from Unsplash:', err);
-                return 'https://via.placeholder.com/200';
-            }
-        };
-
-        fetchRooms();
-    }, []);
-
-    const handleBook = (id) => {
-        navigate(`/book-room/${id}`);
+        } else {
+            toast.error('Please select both check-in and check-out dates.'); // Display an error toast if check-in or check-out dates are not selected
+        }
     };
 
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    // Method to handle booking a room
+    const handleBook = async (room_id) => {
+        const user = currentUser(); // Get the current user from the API
+        if (!user) {
+            toast.error('You must be logged in to book a room.'); // Display an error toast if user is not logged in
+            return;
+        }
+
+        const payload = {
+            user_id: user.getUsername(), // Get the username of the current user
+            room_id: room_id, // Get the ID of the selected room
+            start_date: formatDate(checkInDate), // Format the check-in date
+            end_date: formatDate(checkOutDate), // Format the check-out date
+        };
+
+        try {
+            await bookRoom(payload); // Send the booking request to the API
+            toast.success('Room booked successfully!'); // Display a success toast if booking is successful
+        } catch (err) {
+            toast.error('Failed to book room. Please try again later.'); // Display an error toast if booking fails
+        }
+    };
 
     return (
         <>
-            <NavBar />
+            <NavBar /> {/* Render the navigation bar component */}
             <Container>
                 <Box sx={{ padding: 2 }}>
-                    <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: 'indigo' }}>
-                        <FaHome style={{ marginRight: '8px' }} /> Available Rooms
-                    </Typography>
-                    <Grid container spacing={3} mt={2}>
-                        {rooms.map((room) => (
-                            <Grid item xs={12} sm={6} md={4} key={room.room_id}>
-                                <Paper elevation={3} sx={{ borderRadius: 2 }}>
-                                    <img
-                                        src={room.photoUrl}
-                                        alt={`Room ${room.room_type}`}
-                                        style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
-                                    />
-                                    <Box sx={{ padding: 2 }}>
-                                        <Typography variant="h6" component="h3">
-                                            {room.room_feature}
-                                        </Typography>
-                                        <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                            <FaLocationArrow style={{ fontSize: '12px', marginRight: '4px' }} />
-                                            DalVacationHome
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                            <FaBed style={{ fontSize: '16px', marginRight: '4px' }} />
-                                            {room.room_type}
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 1 }}>
-                                            <Typography variant="h6" sx={{ color: 'indigo' }}>
-                                                ${room.room_price}
-                                            </Typography>
-                                            <Button
-                                                variant="contained"
-                                                sx={{
-                                                    backgroundColor: '#C51E3A',
-                                                    color: 'white',
-                                                    '&:hover': {
-                                                        backgroundColor: '#660000',
-                                                    },
-                                                }}
-                                                onClick={() => handleBook(room.room_id)}
-                                            >
-                                                Book
-                                            </Button>
-                                        </Box>
-                                    </Box>
-                                </Paper>
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: 'indigo' }}>
+                            Check Availability
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            sx={{ color: 'purple' }}
+                            onClick={() => setDrawerOpen(true)}
+                        >
+                            My Bookings
+                        </Button>
+                    </Box>
+                    <DateSelection
+                        checkInDate={checkInDate}
+                        setCheckInDate={setCheckInDate}
+                        checkOutDate={checkOutDate}
+                        setCheckOutDate={setCheckOutDate}
+                        onCheckAvailability={handleCheckAvailability}
+                    /> {/* Render the date selection component */}
+                    {loading ? (
+                        <LoadingSpinner /> // Render a loading spinner if data is being loaded
+                    ) : (
+                        availabilityChecked && <RoomList rooms={rooms} onBook={handleBook} /> // Render the room list component if availability has been checked
+                    )}
                 </Box>
             </Container>
+            <BookingDrawer
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+            /> {/* Render the booking drawer component */}
         </>
     );
-}
+};
 
 export default ClientHome;

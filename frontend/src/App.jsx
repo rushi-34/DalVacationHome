@@ -28,11 +28,7 @@ const AppRouter = ({ loggedInRole }) => {
                     path="/"
                     element={
                         <>
-                            {/* <NavBar />
-                            <IndexPage /> */}
-                            {/* <ClientDashboard /> */}
                             <ClientHome />
-
                         </>
                     }
                 />
