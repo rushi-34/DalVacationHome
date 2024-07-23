@@ -8,6 +8,9 @@ import { Box } from '@mui/system';
 import { logout } from "../CognitoHelper"; 
 import CustomButton from './CustomButton'; 
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthenticationContext } from "../ContextProvider";
 
 const theme = createTheme({
   palette: {
@@ -27,6 +30,8 @@ const theme = createTheme({
 
 function NavBar() {
   const [auth, setAuth] = useState(true);
+  const { userRole } = useContext(AuthenticationContext);
+  const location = useLocation();
 
   const handleLogout = () => {
     logout(); 
@@ -37,7 +42,7 @@ function NavBar() {
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="static" color="primary" elevation={0}> 
-        <Toolbar sx={{ justifyContent: 'space-between' }}> 
+        <Toolbar sx={{ justifyContent: 'space-between', padding: '0 24px' }}> 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', marginRight: 1, color: 'white' }}>
               DAL
@@ -46,6 +51,48 @@ function NavBar() {
               VacationHome
             </Typography>
           </Box>
+          {userRole === 'agent' && (
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, justifyContent: 'center' }}>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/app/agent"
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: location.pathname === '/app/agent' ? '2px solid white' : '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Rooms
+              </Button>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/app/agent/add-room"
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: location.pathname === '/app/agent/add-room' ? '2px solid white' : '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Add Room
+              </Button>
+            </Box>
+          )}
           {auth ? ( 
             <CustomButton
               color="secondary"
