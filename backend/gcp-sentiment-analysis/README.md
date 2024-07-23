@@ -32,7 +32,7 @@ This Cloud Function uses Google Cloud Natural Language API to perform sentiment 
 4. **Testing Payload:**
 
    _Trigger URL:
-   https://us-central1-serverless-term.cloudfunctions.net/sentiment-analysis_
+   https://us-central1-serverless-term.cloudfunctions.net/sentiment-analysis
 
    Use the following JSON payload for testing the Cloud Function:
    ```json
