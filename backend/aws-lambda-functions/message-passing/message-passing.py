@@ -25,7 +25,7 @@ def lambda_handler(event, context):
             }
 
         if not is_chat_started(booking_id):
-            start_chat(booking_id, booking_details['property_id'])
+            start_chat(booking_id, booking_details['property_id'], booking_details['customerId'])
 
         add_message(booking_id, message, isAgent)
     except Exception as e:
@@ -49,7 +49,7 @@ def is_chat_started(booking_id):
         print(str(e))
         return False
 
-def start_chat(booking_id, propertyId):
+def start_chat(booking_id, propertyId, customerId):
     # This function will start a chat for the given booking reference code and assign it to random agent.
     agent = get_random_agent(propertyId)
     try:
@@ -57,6 +57,7 @@ def start_chat(booking_id, propertyId):
             Item = {
                 "booking_id": booking_id,
                 'assignedAgent': agent,
+                'customerId': customerId,
                 'messages': []
             }
         )
@@ -82,9 +83,9 @@ def add_message(booking_id, message, isAgent):
 
 def get_random_agent(propertyId):
     try:
-        response = agents_table.query(
+        response = agent_table.query(
             IndexName='PropertyIDIndex', 
-            KeyConditionExpression=Key('propertyID').eq(property_id)
+            KeyConditionExpression=Key('propertyID').eq(propertyId)
         )
         
         agents = response.get('Items', [])
