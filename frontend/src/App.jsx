@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CircularProgress, ThemeProvider, Box } from "@mui/material";
+import { CircularProgress, Box } from "@mui/material";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,6 +16,7 @@ import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
 import SupportChat from "./pages/SupportChat";
 import ClientHome from "./pages/ClientHome";
+import ChatBot from "./pages/ChatBot";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -25,6 +26,8 @@ const AppRouter = ({ loggedInRole }) => {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/login" element={<SignIn />} />
+                <Route path="/register" element={<Signup />} />
                 <Route
                     path="/"
                     element={
@@ -37,9 +40,6 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
-                <Route path="/room/:roomId" element={<><NavBar /><RoomDetailsPage /></>} />
-                <Route path="/add-room" element={<><NavBar /><AddRoom /></>} />
-                <Route path="/edit-room/:id" element={<EditRoom />} />
                 <Route
                     path="/app/client"
                     element={
@@ -49,21 +49,6 @@ const AppRouter = ({ loggedInRole }) => {
                     }
                 />
                 <Route
-                    path="/"
-                    element={
-                        !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
-                    }
-                />
-                <Route path="/login" element={<SignIn />} />
-
-                <Route
-                    path="/"
-                    element={
-                        !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
-                    }
-                />
-                <Route path="/register" element={<Signup />} />
-                <Route
                     path="/app/support"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
@@ -71,53 +56,42 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
-                {/* 
-                {/* <Route
-                    path="/app/agent"
-                    element={
-                        <PrivateRoute isAuthenticated={loggedInRole}>
-                            <AgentDashboard />
-                        </PrivateRoute>
-                    }
-                /> */}
-                {/* New routes for property agent */}
                 {loggedInRole === "agent" && (
                     <>
-                        <Route
-                            path="/app/agent"
+                        <Route 
+                            path="/app/agent" 
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <IndexPage />
                                 </PrivateRoute>
-                            }
+                            } 
                         />
-                        <Route
-                            path="/app/agent/add-room"
+                        <Route 
+                            path="/app/agent/add-room" 
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <AddRoom />
                                 </PrivateRoute>
-                            }
+                            } 
                         />
-                        <Route
-                            path="app/agent/edit-room/:id"
+                        <Route 
+                            path="app/agent/edit-room/:id" 
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <EditRoom />
                                 </PrivateRoute>
-                            }
+                            } 
                         />
                     </>
                 )}
-
             </Routes>
+            <ChatBot/>
         </BrowserRouter>
     );
 };
-
 
 const App = () => {
     const { loading, userRole } = useContext(AuthenticationContext);

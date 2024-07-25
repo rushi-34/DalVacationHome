@@ -22,7 +22,7 @@ const UPLOAD_IMAGE_URL = 'https://r2gzzdiz7wkh2i2l5g2btfqcni0dnwyv.lambda-url.us
 const ADD_ROOM_URL = 'https://423mzrknqx7gj4otyur2ur2dbi0nnzqg.lambda-url.us-east-1.on.aws/';
 
 const AddRoom = () => {
-  const navigate = useNavigate();
+const navigate = useNavigate();
   const [roomData, setRoomData] = useState({
     photo: null,
     roomNumber: '',
