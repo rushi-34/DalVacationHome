@@ -1,6 +1,7 @@
 import json
 import boto3
 import random
+import requests
 from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb')
@@ -83,16 +84,15 @@ def add_message(booking_id, message, isAgent):
 
 def get_random_agent(propertyId):
     try:
-        response = agent_table.query(
-            IndexName='PropertyIDIndex', 
-            KeyConditionExpression=Key('propertyID').eq(propertyId)
-        )
-        
-        agents = response.get('Items', [])
-        
+        response = requests.get('https://mrvsgdy2g3ftwaq6ed6xrugv7q0yjfyn.lambda-url.us-east-1.on.aws')
+        users = response.json()
+
+        agents = [user for user in users if user.get("custom:role") == "agent"]
+
         if not agents:
             return None
-        
-        return random.choice(agents)
+
+        random_agent = random.choice(agents)
+        return random_agent.get("email")
     except Exception as e:
         print(str(e))
