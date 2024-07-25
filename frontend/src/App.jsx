@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CircularProgress, ThemeProvider, Box } from "@mui/material";
+import { CircularProgress, Box } from "@mui/material";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,6 +15,8 @@ import RoomDetailsPage from "./pages/RoomDetailsPage";
 import AddRoom from "./pages/AddRoom";
 import EditRoom from "./pages/EditRoom";
 import SupportChat from "./pages/SupportChat";
+import ClientHome from "./pages/ClientHome";
+import ChatBot from "./pages/ChatBot";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -24,16 +26,10 @@ const AppRouter = ({ loggedInRole }) => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route
-                    path="/"
-                    element={
-                        !loggedInRole ? <Navigate to="/login" /> : <Navigate to="/app" />
-                    }
-                />
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/register" element={<Signup />} />
                 <Route
-                    path="/app"
+                    path="/"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
                             {loggedInRole === "client" ? (
@@ -48,7 +44,7 @@ const AppRouter = ({ loggedInRole }) => {
                     path="/app/client"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
-                            <ClientDashboard />
+                            <ClientHome />
                         </PrivateRoute>
                     }
                 />
@@ -60,15 +56,6 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
-                {/* <Route
-                    path="/app/agent"
-                    element={
-                        <PrivateRoute isAuthenticated={loggedInRole}>
-                            <AgentDashboard />
-                        </PrivateRoute>
-                    }
-                /> */}
-                {/* New routes for property agent */}
                 {loggedInRole === "agent" && (
                     <>
                         <Route 
@@ -100,12 +87,11 @@ const AppRouter = ({ loggedInRole }) => {
                         />
                     </>
                 )}
-     
             </Routes>
+            <ChatBot/>
         </BrowserRouter>
     );
 };
-
 
 const App = () => {
     const { loading, userRole } = useContext(AuthenticationContext);

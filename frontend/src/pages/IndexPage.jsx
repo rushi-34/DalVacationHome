@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { 
+import {
   Box, Typography, Grid, Paper, Button, CircularProgress
 } from '@mui/material';
 import { FaHome, FaLocationArrow, FaEdit, FaTrash, FaBed } from "react-icons/fa";
@@ -73,7 +73,7 @@ function IndexPage() {
           <Grid item xs={12} sm={6} md={4} key={room.id}>
             <Paper elevation={3} sx={{ borderRadius: 2 }}>
               <img
-                src={room.image} 
+                src={room.image}
                 alt={`Room ${room.roomNumber}`}
                 style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
               />
@@ -96,11 +96,11 @@ function IndexPage() {
                     ${room.price}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button 
+                    <Button
                       variant="outlined"
                       startIcon={<FaEdit />}
                       onClick={() => handleEdit(room.id)}
-                      sx={{ 
+                      sx={{
                         borderColor: '#2196f3',
                         color: '#2196f3',
                         '&:hover': {
@@ -111,11 +111,11 @@ function IndexPage() {
                     >
                       Edit
                     </Button>
-                    <Button 
+                    <Button
                       variant="outlined"
                       startIcon={<FaTrash />}
                       onClick={() => handleDelete(room.id)}
-                      sx={{ 
+                      sx={{
                         borderColor: '#f44336',
                         color: '#f44336',
                         '&:hover': {
