@@ -7,8 +7,8 @@ const SupportChat = () => {
   const [chats, setChats] = useState([]);
   const [currentBookingId, setCurrentBookingId] = useState('');
   const [message, setMessage] = useState('');
-  const isAgent = true;
-
+  const { userEmail, userRole } = useContext(AuthenticationContext);
+  const isAgent = userRole === 'agent';
   const handleSendMessage = (message) => {
     const postData = {
         booking_id: "2418",
@@ -133,7 +133,7 @@ const SupportChat = () => {
     }
 
     useEffect(() => {
-      fetchChats('3015', isAgent); 
+      fetchChats(userEmail, isAgent); 
     }, []);
 
     return (

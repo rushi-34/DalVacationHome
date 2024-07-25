@@ -7,7 +7,8 @@ const AuthenticationContextProvider = (props) => {
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState(null);
     const [userName, setUserName] = useState(null);
-    
+    const [userEmail, setUserEmail] = useState(null);
+
     useEffect(() => {
         const userpool = getUserPool();
         const user = userpool.getCurrentUser();
@@ -30,7 +31,10 @@ const AuthenticationContextProvider = (props) => {
                                 return acc;
                             }, {});
                             const role = userAttributesMap.current["custom:role"];
+                            const email = userAttributesMap.current["email"];
+                            console.log('email:' + email);
                             setUserRole(role);
+                            setUserEmail(email);
                             setLoading(false);
                         }
                     });
