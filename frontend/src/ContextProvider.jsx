@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 import { getUserPool } from './CognitoHelper';
 
+
 export const AuthenticationContext = createContext()
 const AuthenticationContextProvider = (props) => {
     const userAttributesMap = useRef({});
@@ -12,7 +13,7 @@ const AuthenticationContextProvider = (props) => {
     useEffect(() => {
         const userpool = getUserPool();
         const user = userpool.getCurrentUser();
-        if(!user) {
+        if (!user) {
             setLoading(false);
             return;
         }
@@ -26,13 +27,13 @@ const AuthenticationContextProvider = (props) => {
                         if (err) {
                             console.error(err);
                         } else {
-                            userAttributesMap.current  = result.reduce((acc, attr) => {
+                            userAttributesMap.current = result.reduce((acc, attr) => {
                                 acc[attr.getName()] = attr.getValue();
                                 return acc;
                             }, {});
                             const role = userAttributesMap.current["custom:role"];
                             const email = userAttributesMap.current["email"];
-                            console.log('email:' + email);
+                            console.log('user email:' + email);
                             setUserRole(role);
                             setUserEmail(email);
                             setLoading(false);
@@ -45,9 +46,9 @@ const AuthenticationContextProvider = (props) => {
             }
         });
     }, []);
-  return (
-    <AuthenticationContext.Provider value={{userAttributesMap, loading, userRole, userName}}>{props.children}</AuthenticationContext.Provider>
-  )
+    return (
+        <AuthenticationContext.Provider value={{ userAttributesMap, loading, userRole, userName }}>{props.children}</AuthenticationContext.Provider>
+    )
 }
 
 export default AuthenticationContextProvider

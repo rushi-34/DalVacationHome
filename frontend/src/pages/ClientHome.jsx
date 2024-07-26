@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Container, Box, Typography, Button } from '@mui/material';
 import { toast } from 'react-toastify';
 import NavBar from '../components/Navbar';
@@ -17,8 +17,13 @@ const ClientHome = () => {
     const [availabilityChecked, setAvailabilityChecked] = useState(false); // State variable to indicate if availability has been checked
     const [drawerOpen, setDrawerOpen] = useState(false); // State variable to indicate if the booking drawer is open
 
+
+
     // Method to handle checking availability of rooms
     const handleCheckAvailability = async () => {
+        const user = currentUser(); // Get the current user from the API
+        console.log('User:', user); // Log the current user
+
         if (checkInDate && checkOutDate) {
             setLoading(true);
             try {
@@ -49,6 +54,12 @@ const ClientHome = () => {
             start_date: formatDate(checkInDate), // Format the check-in date
             end_date: formatDate(checkOutDate), // Format the check-out date
         };
+        // const emailPayload = {
+
+        //         email:user.get,
+        //         subject:"Test Subject",
+        //         body:"Test Body"
+        // }
 
         try {
             console.log('Booking payload:', payload); // Log the booking payload
@@ -70,12 +81,6 @@ const ClientHome = () => {
                             Check Availability
                         </Typography>
 
-                        {/* <Button
-                            variant="outlined"
-                            sx={{ color: 'purple' }}
-                        >
-
-                        </Button> */}
                         <Button
                             variant="outlined"
                             sx={{ color: 'purple' }}
