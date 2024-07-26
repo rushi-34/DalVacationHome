@@ -119,6 +119,8 @@ function NavBar() {
               <Button 
                 color="inherit" 
                 component={Link} 
+<<<<<<< HEAD
+=======
                 to="/app/agent/dashboard"
                 sx={{ 
                   mx: 2, 
@@ -141,6 +143,7 @@ function NavBar() {
               <Button
                 color="inherit"
                 component={Link}
+>>>>>>> dev
                 to="/app/support"
                 sx={{
                   mx: 2,
