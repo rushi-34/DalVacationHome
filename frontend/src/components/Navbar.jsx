@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthenticationContext } from "../ContextProvider";
+import ConcernModal from './ConcernModal';
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,10 @@ function NavBar() {
   const [auth, setAuth] = useState(true);
   const { userRole } = useContext(AuthenticationContext);
   const location = useLocation();
+  const [openConcernModal, setOpenConcernModal] = useState(false);
+
+  const handleOpenConcernModal = () => setOpenConcernModal(true);
+  const handleCloseConcernModal = () => setOpenConcernModal(false);
 
   const handleLogout = () => {
     logout(); 
@@ -51,7 +56,7 @@ function NavBar() {
               VacationHome
             </Typography>
           </Box>
-          {userRole === 'agent' && (
+          {userRole === 'agent' ? (
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, justifyContent: 'center' }}>
               <Button 
                 color="inherit" 
@@ -91,8 +96,69 @@ function NavBar() {
               >
                 Add Room
               </Button>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/app/support"
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: location.pathname === '/app/support' ? '2px solid white' : '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Chat
+              </Button>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
+              <Button 
+                color="inherit" 
+                onClick={handleOpenConcernModal}
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Raise a Concern
+              </Button>
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/app/support"
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: location.pathname === '/app/support' ? '2px solid white' : '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Chat
+              </Button>
+              <ConcernModal open={openConcernModal} handleClose={handleCloseConcernModal} />
             </Box>
           )}
+          
           {auth ? ( 
             <CustomButton
               color="secondary"
