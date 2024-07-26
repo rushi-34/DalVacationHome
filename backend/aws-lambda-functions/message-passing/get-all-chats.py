@@ -7,9 +7,9 @@ support_chat_table = dynamodb.Table('dalvac-support')
 
 def lambda_handler(event, context):
     # Extract user id and role from the request body
-    body = event.get('body-json', {})
-    user_id = body.get('user_id')
-    is_agent = body.get('is_agent')
+    body = json.loads(event['body'])
+    user_id = body['user_id']
+    is_agent = body['is_agent']
 
     try:
         chat_details = get_chat_details(user_id, is_agent)
@@ -37,6 +37,7 @@ def lambda_handler(event, context):
 
 def get_chat_details(user_id, is_agent):
     # This function will return chat details for the given user ID.
+    print(user_id)
     try:
         if is_agent:
             response = support_chat_table.scan(

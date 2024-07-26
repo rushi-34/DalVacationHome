@@ -6,7 +6,7 @@ import json
 
 @functions_framework.cloud_event
 def support_chat(cloud_event):
-    lambda_endpoint = "https://5t9c2sbo5j.execute-api.us-east-1.amazonaws.com/dev/support"
+    lambda_endpoint = "https://ejkfhj7uwql7foekrjqfd7elzy0yjfmw.lambda-url.us-east-1.on.aws/"
     
     data = json.loads(base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8'))
 
