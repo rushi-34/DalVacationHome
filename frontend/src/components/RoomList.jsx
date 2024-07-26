@@ -9,7 +9,7 @@ const RoomList = ({ rooms, onBook }) => (
         </Typography>
         <Grid container spacing={3} mt={2}>
             {rooms.map((room) => (
-                <Grid item xs={12} sm={6} md={4} key={room.room_id}>
+                <Grid item xs={12} sm={6} md={4} key={room.roomNumber}>
                     <RoomCard room={room} onBook={onBook} />
                 </Grid>
             ))}

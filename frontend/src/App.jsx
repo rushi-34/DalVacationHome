@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { theme } from "./theme";
 import SignIn from "./SignIn";
 import Signup from "./Signup";
-import ClientDashboard from "./pages/ClientDashboard";
 import AgentDashboard from "./pages/AgentDashboard";
 import { AuthenticationContext } from "./ContextProvider";
 import NavBar from "./components/Navbar";
@@ -58,37 +57,37 @@ const AppRouter = ({ loggedInRole }) => {
                 />
                 {loggedInRole === "agent" && (
                     <>
-                        <Route 
-                            path="/app/agent" 
+                        <Route
+                            path="/app/agent"
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <IndexPage />
                                 </PrivateRoute>
-                            } 
+                            }
                         />
-                        <Route 
-                            path="/app/agent/add-room" 
+                        <Route
+                            path="/app/agent/add-room"
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <AddRoom />
                                 </PrivateRoute>
-                            } 
+                            }
                         />
-                        <Route 
-                            path="app/agent/edit-room/:id" 
+                        <Route
+                            path="app/agent/edit-room/:id"
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
                                     <NavBar />
                                     <EditRoom />
                                 </PrivateRoute>
-                            } 
+                            }
                         />
                     </>
                 )}
             </Routes>
-            <ChatBot/>
+            <ChatBot />
         </BrowserRouter>
     );
 };

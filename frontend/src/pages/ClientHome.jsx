@@ -45,14 +45,16 @@ const ClientHome = () => {
 
         const payload = {
             user_id: user.getUsername(), // Get the username of the current user
-            room_id: room_id, // Get the ID of the selected room
+            roomNumber: room_id, // Get the ID of the selected room
             start_date: formatDate(checkInDate), // Format the check-in date
             end_date: formatDate(checkOutDate), // Format the check-out date
         };
 
         try {
+            console.log('Booking payload:', payload); // Log the booking payload
             await bookRoom(payload); // Send the booking request to the API
             toast.success('Room booked successfully!'); // Display a success toast if booking is successful
+            handleCheckAvailability(); // Check availability again after booking
         } catch (err) {
             toast.error('Failed to book room. Please try again later.'); // Display an error toast if booking fails
         }

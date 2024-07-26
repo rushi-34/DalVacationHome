@@ -2,7 +2,8 @@
 import axios from 'axios';
 import { CognitoUserPool } from 'amazon-cognito-identity-js';
 
-const LAMBDA_URL = import.meta.env.VITE_GET_ROOMS_LAMBDA_URL;
+const GET_ROOMS_URL = import.meta.env.VITE_GET_ROOMS_LAMBDA_URL;
+const GET_AVAILABLE_ROOMS_URL = import.meta.env.VITE_GET_AVAILBLE_ROOMS_LAMBDA_URL;
 const BOOK_ROOM_URL = import.meta.env.VITE_BOOK_ROOM_LAMBDA_URL;
 const UNSPLASH_API_URL = import.meta.env.VITE_UNSPLASH_API_URL;
 const UNSPLASH_API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
@@ -24,24 +25,37 @@ export const currentUser = () => {
 
 export const fetchRooms = async (checkInDate, checkOutDate) => {
     try {
-        const payload = {
-            start_date: formatDate(checkInDate),
-            end_date: formatDate(checkOutDate),
-        };
-        const response = await axios.post(LAMBDA_URL, payload);
-        const roomsData = response.data;
-
-        const roomsWithPhotos = await Promise.all(
-            roomsData.map(async (room) => {
-                const photoUrl = await fetchPhoto();
-                return { ...room, photoUrl };
-            })
+        // Step 1: Fetch available rooms
+        const availableRoomsResponse = await axios.post(GET_AVAILABLE_ROOMS_URL, {
+          startDate: checkInDate,
+          endDate: checkOutDate
+        });
+        const availableRoomNumbers = availableRoomsResponse.data.availableRooms;
+    
+        // Log to inspect the available room numbers
+        console.log("Available Room Numbers:", availableRoomNumbers.availableRooms);
+        
+    
+        // Ensure availableRoomNumbers is an array
+        if (!Array.isArray(availableRoomNumbers)) {
+          throw new Error("Available room numbers is not an array");
+        }
+    
+        // Step 2: Fetch all rooms
+        const allRoomsResponse = await axios.get(GET_ROOMS_URL);
+        const allRooms = allRoomsResponse.data;
+    
+        // Step 3: Filter rooms based on available room numbers
+        const availableRooms = allRooms.filter(room => 
+          availableRoomNumbers.includes(room.roomNumber)
         );
-
-        return roomsWithPhotos;
-    } catch (err) {
-        throw new Error('Failed to load rooms');
-    }
+        console.log("Available Rooms:", availableRooms);
+    
+        return availableRooms;
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+        return [];
+      }
 };
 
 export const fetchPhoto = async () => {

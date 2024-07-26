@@ -17,13 +17,13 @@ const RoomCard = ({ room, onBook }) => {
     return (
         <Paper elevation={3} sx={{ borderRadius: 2 }}>
             <img
-                src={room.photoUrl}
-                alt={`Room ${room.room_type}`}
+                src={room.image}
+                alt={`Room ${room.roomType}`}
                 style={{ width: '100%', height: 200, objectFit: 'cover', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
             />
             <Box sx={{ padding: 2 }}>
                 <Typography variant="h6" component="h3">
-                    {room.room_feature}
+                    {room.roomType}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <FaLocationArrow style={{ fontSize: '12px', marginRight: '4px' }} />
@@ -31,11 +31,11 @@ const RoomCard = ({ room, onBook }) => {
                 </Typography>
                 <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <FaBed style={{ fontSize: '16px', marginRight: '4px' }} />
-                    {room.room_type}
+                    {room.roomNumber}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 1 }}>
                     <Typography variant="h6" sx={{ color: 'indigo' }}>
-                        ${room.room_price}
+                        ${room.price}
                     </Typography>
                     <Button
                         variant="contained"
@@ -46,17 +46,17 @@ const RoomCard = ({ room, onBook }) => {
                                 backgroundColor: '#660000',
                             },
                         }}
-                        onClick={() => onBook(room.room_id)}
+                        onClick={() => onBook(room.roomNumber)}
                     >
                         Book
                     </Button>
                 </Box>
                 <Box sx={{ marginTop: 1 }}>
-                    {room.overall_sentiment && room.star_rating ? (
+                    {room.feedback.length > 0 ? (
                         <>
-                            {getSentimentChip(room.overall_sentiment)}
+                            {getSentimentChip('Positive')}
                             <Chip
-                                label={`Rating: ${room.star_rating}`}
+                                label={`Rating: ${room.feedback.length}`}
                                 color="info"
                                 sx={{ margin: '4px' }}
                             />
