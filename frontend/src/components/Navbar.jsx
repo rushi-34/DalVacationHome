@@ -116,13 +116,13 @@ function NavBar() {
                 Chat
               </Button>
 
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/agent/dashboard"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/agent/dashboard' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -160,6 +160,10 @@ function NavBar() {
             </Box>
           ) : (null)}
 
+          <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{
+            alignSelf: 'right',
+          }}>
+            Feedbacks</Button>
           {
             !userRole && location.pathname === '/guest' ? (
               <Button color="inherit" variant="text" component={Link} to="/login">
@@ -168,6 +172,10 @@ function NavBar() {
             ) : !userRole && location.pathname === '/login' ? (
               <Button color="inherit" variant="text" component={Link} to="/guest">
                 Guest
+              </Button>
+            ) : !userRole && location.pathname === '/feedbacks' ? (
+              <Button color="inherit" variant="text" component={Link} to="/login">
+                Login
               </Button>
             ) : (
               console.log(auth),
