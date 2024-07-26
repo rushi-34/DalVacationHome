@@ -16,6 +16,7 @@ import EditRoom from "./pages/EditRoom";
 import SupportChat from "./pages/SupportChat";
 import ClientHome from "./pages/ClientHome";
 import ChatBot from "./pages/ChatBot";
+import Guest from "./pages/Guest";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -27,6 +28,7 @@ const AppRouter = ({ loggedInRole }) => {
             <Routes>
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/register" element={<Signup />} />
+
                 <Route
                     path="/"
                     element={
@@ -39,6 +41,12 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
+
+                <Route
+                    path="/guest"
+                    element={
+                        <Guest />
+                    } />
                 <Route
                     path="/app/client"
                     element={
@@ -47,6 +55,7 @@ const AppRouter = ({ loggedInRole }) => {
                         </PrivateRoute>
                     }
                 />
+
                 <Route
                     path="/app/support"
                     element={

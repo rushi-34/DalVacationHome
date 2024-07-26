@@ -1,26 +1,25 @@
-import React, { useRef, useState } from 'react';
-import { Container, Box, Typography, Button } from '@mui/material';
-import { toast } from 'react-toastify';
+import React, { useState } from 'react';
 import NavBar from '../components/Navbar';
+import { Box, Button, Container, Typography } from '@mui/material';
 import DateSelection from '../components/DateSelection';
-import RoomList from '../components/RoomList';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { fetchRooms, bookRoom, formatDate } from '../api/api';
-import { currentUser } from '../api/api'; // Import the currentUser function from api.js
-import BookingDrawer from '../components/BookingDrawer';
+import { toast } from 'react-toastify';
+import { fetchRooms } from '../api/api';
+import RoomList from '../components/RoomList';
+import { useNavigate } from 'react-router-dom';
 
-const ClientHome = () => {
+const Guest = () => {
     const [rooms, setRooms] = useState([]); // State variable to store the list of rooms
     const [loading, setLoading] = useState(false); // State variable to indicate if data is being loaded
     const [checkInDate, setCheckInDate] = useState(null); // State variable to store the check-in date
     const [checkOutDate, setCheckOutDate] = useState(null); // State variable to store the check-out date
     const [availabilityChecked, setAvailabilityChecked] = useState(false); // State variable to indicate if availability has been checked
     const [drawerOpen, setDrawerOpen] = useState(false); // State variable to indicate if the booking drawer is open
-
+    const navigate = useNavigate(); // Get the navigate function from the useNavigate hook
     // Method to handle checking availability of rooms
     const handleCheckAvailability = async () => {
-        const user = currentUser(); // Get the current user from the API
-        console.log('User:', user); // Log the current user
+        // const user = currentUser(); // Get the current user from the API
+        // console.log('User:', user); // Log the current user
 
         if (checkInDate && checkOutDate) {
             setLoading(true);
@@ -30,6 +29,7 @@ const ClientHome = () => {
                 setAvailabilityChecked(true); // Set availabilityChecked to true to indicate availability has been checked
             } catch (err) {
                 toast.error('Failed to load rooms. Please try again later.'); // Display an error toast if fetching rooms fails
+                console.log(err);
             } finally {
                 setLoading(false); // Set loading to false after fetching rooms data
             }
@@ -38,33 +38,36 @@ const ClientHome = () => {
         }
     };
 
+
     // Method to handle booking a room
     const handleBook = async (room_id) => {
-        const user = currentUser(); // Get the current user from the API
-        if (!user) {
-            toast.error('You must be logged in to book a room.'); // Display an error toast if user is not logged in
-            return;
-        }
+        // const user = currentUser(); // Get the current user from the API
+        // if (!user) {
+        //     toast.error('You must be logged in to book a room.'); // Display an error toast if user is not logged in
+        //     return;
+        // }
 
-        const payload = {
-            user_id: user.getUsername(), // Get the username of the current user
-            roomNumber: room_id, // Get the ID of the selected room
-            start_date: formatDate(checkInDate), // Format the check-in date
-            end_date: formatDate(checkOutDate), // Format the check-out date
-        };
+        // const payload = {
+        //     user_id: user.getUsername(), // Get the username of the current user
+        //     roomNumber: room_id, // Get the ID of the selected room
+        //     start_date: formatDate(checkInDate), // Format the check-in date
+        //     end_date: formatDate(checkOutDate), // Format the check-out date
+        // };
 
-        try {
-            console.log('Booking payload:', payload); // Log the booking payload
-            await bookRoom(payload); // Send the booking request to the API
-            toast.success('Room booked successfully!'); // Display a success toast if booking is successful
-            handleCheckAvailability(); // Check availability again after booking
-        } catch (err) {
-            toast.error('Failed to book room. Please try again later.'); // Display an error toast if booking fails
-        }
+        // try {
+        //     console.log('Booking payload:', payload); // Log the booking payload
+        //     await bookRoom(payload); // Send the booking request to the API
+        //     toast.success('Room booked successfully!'); // Display a success toast if booking is successful
+        //     handleCheckAvailability(); // Check availability again after booking
+        // } catch (err) {
+        //     toast.error('Failed to book room. Please try again later.'); // Display an error toast if booking fails
+        // }
+        toast.error('You must be logged in to book a room.'); // Display an error toast if user is not logged in
+        navigate('/login'); // Redirect to the login page if the user is not logged
     };
 
     return (
-        <>
+        <div>
             <NavBar /> {/* Render the navigation bar component */}
             <Container>
                 <Box sx={{ padding: 2 }}>
@@ -72,14 +75,6 @@ const ClientHome = () => {
                         <Typography variant="h6" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: 'indigo' }}>
                             Check Availability
                         </Typography>
-
-                        <Button
-                            variant="outlined"
-                            sx={{ color: 'purple' }}
-                            onClick={() => setDrawerOpen(true)}
-                        >
-                            My Bookings
-                        </Button>
                     </Box>
                     <DateSelection
                         checkInDate={checkInDate}
@@ -95,12 +90,8 @@ const ClientHome = () => {
                     )}
                 </Box>
             </Container>
-            <BookingDrawer
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-            /> {/* Render the booking drawer component */}
-        </>
+        </div>
     );
 };
 
-export default ClientHome;
+export default Guest;
