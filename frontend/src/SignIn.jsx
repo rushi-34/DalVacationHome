@@ -10,6 +10,7 @@ import { getAwsCredentials, getCognitoUser } from "./CognitoHelper";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { blue } from "@mui/material/colors";
+import NavBar from "./components/Navbar";
 
 const loginSchema = yup.object({
     username: yup.string().required("Username is required"),
@@ -127,127 +128,132 @@ const SignIn = () => {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-            <Grid container spacing={4} alignItems="center">
-                <Grid item xs={12} md={6}>
-                    <Box
-                        component="img"
-                        src="/assets/dv4.jpeg"
-                        alt="bg"
-                        sx={{
-                            width: '100%',
-                            height: 'auto',
-                            maxHeight: '80vh',
-                            objectFit: 'cover',
-                            borderRadius: 2,
-                        }}
-                    />
+        <>
+            <NavBar />
+            <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+
+                <Grid container spacing={4} alignItems="center">
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            component="img"
+                            src="/assets/dv4.jpeg"
+                            alt="bg"
+                            sx={{
+                                width: '100%',
+                                height: 'auto',
+                                maxHeight: '80vh',
+                                objectFit: 'cover',
+                                borderRadius: 2,
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{ maxWidth: 400, margin: 'auto' }}>
+                            <Typography variant="h4" align="center" gutterBottom color="red">
+                                Login
+                            </Typography>
+                            {formState === 0 && (
+                                <form onSubmit={handleSubmitLogin(handleLogin)}>
+                                    <Box mb={3}>
+                                        <Controller
+                                            name="username"
+                                            control={controlLogin}
+                                            render={({ field }) => (
+                                                <CustomInput
+                                                    label="Username"
+                                                    error={loginErrors.username}
+                                                    helperText={loginErrors.username?.message}
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                    <Box mb={3}>
+                                        <Controller
+                                            name="password"
+                                            control={controlLogin}
+                                            render={({ field }) => (
+                                                <CustomInput
+                                                    label="Password"
+                                                    type="password"
+                                                    error={loginErrors.password}
+                                                    helperText={loginErrors.password?.message}
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                    <Box mb={3}>
+                                        <CustomButton fullWidth variant="contained" size="large" type="submit">
+                                            {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Login"}
+                                        </CustomButton>
+                                    </Box>
+                                </form>
+                            )}
+                            {formState === 1 && (
+                                <form onSubmit={handleSubmitSecurity(handleCustomChallenge)}>
+                                    <Box mb={3}>
+                                        <Typography variant="body1" gutterBottom>
+                                            {questionBank.find((q) => q.q_id === question)?.question}
+                                        </Typography>
+                                        <Controller
+                                            name="answer"
+                                            control={controlSecurity}
+                                            render={({ field }) => (
+                                                <CustomInput
+                                                    label="Answer"
+                                                    error={securityErrors.answer}
+                                                    helperText={securityErrors.answer?.message}
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                    <Box mb={3}>
+                                        <CustomButton fullWidth variant="contained" size="large" type="submit">
+                                            {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Submit"}
+                                        </CustomButton>
+                                    </Box>
+                                </form>
+                            )}
+                            {formState === 2 && (
+                                <form onSubmit={handleSubmitCaesar(handleCustomChallenge)}>
+                                    <Box mb={3}>
+                                        <Typography variant="body1" gutterBottom>
+                                            Decipher the following CAESAR cipher using the key you set during registration: {question}
+                                        </Typography>
+                                        <Controller
+                                            name="answer"
+                                            control={controlCaesar}
+                                            render={({ field }) => (
+                                                <CustomInput
+                                                    label="Answer"
+                                                    error={caesarErrors.answer}
+                                                    helperText={caesarErrors.answer?.message}
+                                                    {...field}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                    <Box mb={3}>
+                                        <CustomButton fullWidth variant="contained" size="large" type="submit">
+                                            {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Submit"}
+                                        </CustomButton>
+                                    </Box>
+                                </form>
+                            )}
+                            <Typography variant="body2" align="center">
+                                Don't have an account?{' '}
+                                <MuiLink component={Link} to="/register" underline="hover" color={blue}>
+                                    Register Here!
+                                </MuiLink>
+                            </Typography>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <Box sx={{ maxWidth: 400, margin: 'auto' }}>
-                        <Typography variant="h4" align="center" gutterBottom color="red">
-                            Login
-                        </Typography>
-                        {formState === 0 && (
-                            <form onSubmit={handleSubmitLogin(handleLogin)}>
-                                <Box mb={3}>
-                                    <Controller
-                                        name="username"
-                                        control={controlLogin}
-                                        render={({ field }) => (
-                                            <CustomInput
-                                                label="Username"
-                                                error={loginErrors.username}
-                                                helperText={loginErrors.username?.message}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Box>
-                                <Box mb={3}>
-                                    <Controller
-                                        name="password"
-                                        control={controlLogin}
-                                        render={({ field }) => (
-                                            <CustomInput
-                                                label="Password"
-                                                type="password"
-                                                error={loginErrors.password}
-                                                helperText={loginErrors.password?.message}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Box>
-                                <Box mb={3}>
-                                    <CustomButton fullWidth variant="contained" size="large" type="submit">
-                                        {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Login"}
-                                    </CustomButton>
-                                </Box>
-                            </form>
-                        )}
-                        {formState === 1 && (
-                            <form onSubmit={handleSubmitSecurity(handleCustomChallenge)}>
-                                <Box mb={3}>
-                                    <Typography variant="body1" gutterBottom>
-                                        {questionBank.find((q) => q.q_id === question)?.question}
-                                    </Typography>
-                                    <Controller
-                                        name="answer"
-                                        control={controlSecurity}
-                                        render={({ field }) => (
-                                            <CustomInput
-                                                label="Answer"
-                                                error={securityErrors.answer}
-                                                helperText={securityErrors.answer?.message}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Box>
-                                <Box mb={3}>
-                                    <CustomButton fullWidth variant="contained" size="large" type="submit">
-                                        {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Submit"}
-                                    </CustomButton>
-                                </Box>
-                            </form>
-                        )}
-                        {formState === 2 && (
-                            <form onSubmit={handleSubmitCaesar(handleCustomChallenge)}>
-                                <Box mb={3}>
-                                    <Typography variant="body1" gutterBottom>
-                                        Decipher the following CAESAR cipher using the key you set during registration: {question}
-                                    </Typography>
-                                    <Controller
-                                        name="answer"
-                                        control={controlCaesar}
-                                        render={({ field }) => (
-                                            <CustomInput
-                                                label="Answer"
-                                                error={caesarErrors.answer}
-                                                helperText={caesarErrors.answer?.message}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Box>
-                                <Box mb={3}>
-                                    <CustomButton fullWidth variant="contained" size="large" type="submit">
-                                        {buttonLoading ? <CircularProgress color="secondary" size={20} /> : "Submit"}
-                                    </CustomButton>
-                                </Box>
-                            </form>
-                        )}
-                        <Typography variant="body2" align="center">
-                            Don't have an account?{' '}
-                            <MuiLink component={Link} to="/register" underline="hover" color={blue}>
-                                Register Here!
-                            </MuiLink>
-                        </Typography>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Container>
+            </Container>
+        </>
+
     );
 };
 

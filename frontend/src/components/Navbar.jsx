@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import { logout } from "../CognitoHelper"; 
-import CustomButton from './CustomButton'; 
+import { logout } from "../CognitoHelper";
+import CustomButton from './CustomButton';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
@@ -15,17 +15,17 @@ import ConcernModal from './ConcernModal';
 
 const theme = createTheme({
   palette: {
-    mode: 'dark', 
+    mode: 'dark',
     primary: {
       main: '#ffffff',
     },
     background: {
-      default: '#212121', 
-      paper: '#212121',  
+      default: '#212121',
+      paper: '#212121',
     },
   },
   typography: {
-    fontFamily: 'Roboto, sans-serif', 
+    fontFamily: 'Roboto, sans-serif',
   },
 });
 
@@ -39,15 +39,15 @@ function NavBar() {
   const handleCloseConcernModal = () => setOpenConcernModal(false);
 
   const handleLogout = () => {
-    logout(); 
-    setAuth(false); 
-    window.location.href = "/login"; 
+    logout();
+    setAuth(false);
+    window.location.href = "/login";
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="static" color="primary" elevation={0}> 
-        <Toolbar sx={{ justifyContent: 'space-between', padding: '0 24px' }}> 
+      <AppBar position="static" color="primary" elevation={0}>
+        <Toolbar sx={{ justifyContent: 'space-between', padding: '0 24px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', marginRight: 1, color: 'white' }}>
               DAL
@@ -58,13 +58,13 @@ function NavBar() {
           </Box>
           {userRole === 'agent' ? (
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, justifyContent: 'center' }}>
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/agent"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/agent' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -77,13 +77,13 @@ function NavBar() {
               >
                 Rooms
               </Button>
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/agent/add-room"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/agent/add-room' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -96,13 +96,13 @@ function NavBar() {
               >
                 Add Room
               </Button>
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/support"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/support' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -136,15 +136,15 @@ function NavBar() {
                 Analytics
               </Button>
             </Box>
-          ) : (
+          ) : userRole === 'client' ? (
             <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
-              <Button 
-                color="inherit" 
-                component={Link} 
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/support"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/support' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -158,22 +158,29 @@ function NavBar() {
                 Chat
               </Button>
             </Box>
-          )}
-          
-          {auth ? ( 
-            <CustomButton
-              color="secondary"
-              variant="contained"
-              onClick={handleLogout}
-              sx={{ marginLeft: 2 }} 
-            >
-              Logout
-            </CustomButton>
-          ) : (
-            <Button color="inherit" variant="text" component={Link} to="/login">
-              Login
-            </Button>
-          )} 
+          ) : (null)}
+
+          {
+            !userRole && location.pathname === '/guest' ? (
+              <Button color="inherit" variant="text" component={Link} to="/login">
+                Login
+              </Button>
+            ) : !userRole && location.pathname === '/login' ? (
+              <Button color="inherit" variant="text" component={Link} to="/guest">
+                Guest
+              </Button>
+            ) : (
+              console.log(auth),
+              <CustomButton
+                color="secondary"
+                variant="contained"
+                onClick={handleLogout}
+                sx={{ marginLeft: 2 }}
+              >
+                Logout
+              </CustomButton>
+            )
+          }
         </Toolbar>
       </AppBar>
     </ThemeProvider>
