@@ -7,6 +7,7 @@ const GET_AVAILABLE_ROOMS_URL = import.meta.env.VITE_GET_AVAILBLE_ROOMS_LAMBDA_U
 const BOOK_ROOM_URL = import.meta.env.VITE_BOOK_ROOM_LAMBDA_URL;
 const UNSPLASH_API_URL = import.meta.env.VITE_UNSPLASH_API_URL;
 const UNSPLASH_API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
+const SEND_EMAIL_URL = import.meta.env.VITE_SEND_EMAIL_LAMBDA_URL;
 
 const poolData = {
     UserPoolId: 'us-east-1_oAtQBU6kM',
