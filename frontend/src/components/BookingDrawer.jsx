@@ -123,7 +123,7 @@ const BookingDrawer = ({ open, onClose }) => {
                             <Typography variant="h6">{`Booking ID: ${booking.booking_id}`}</Typography>
                             <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <FaLocationArrow style={{ fontSize: '12px', marginRight: '4px' }} />
-                                Room ID: {booking.room_id}
+                                Room ID: {booking.roomNumber}
                             </Typography>
                             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <FaBed style={{ fontSize: '16px', marginRight: '4px' }} />
