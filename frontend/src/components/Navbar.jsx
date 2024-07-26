@@ -120,24 +120,6 @@ function NavBar() {
             <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
               <Button 
                 color="inherit" 
-                onClick={handleOpenConcernModal}
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
-                  fontSize: '1rem',
-                  borderBottom: '2px solid transparent',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    borderBottom: '2px solid white',
-                  },
-                  transition: 'all 0.3s',
-                  padding: '6px 16px',
-                }}
-              >
-                Raise a Concern
-              </Button>
-              <Button 
-                color="inherit" 
                 component={Link} 
                 to="/app/support"
                 sx={{ 
@@ -155,7 +137,6 @@ function NavBar() {
               >
                 Chat
               </Button>
-              <ConcernModal open={openConcernModal} handleClose={handleCloseConcernModal} />
             </Box>
           )}
           
