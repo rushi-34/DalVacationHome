@@ -545,6 +545,166 @@
             "Principal": "*"
             }
         }, 
+        "GetFilteredRoomFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+            "Handler": "index.handler",
+            "Role": "arn:aws:iam::149064047328:role/LabRole",
+            "Code": {
+                "S3Bucket": "dalvacationhome-35",
+                "S3Key": "get-filtered-rooms.zip"
+            },
+            "Runtime": "nodejs20.x"
+            }
+        },
+        "GetFilteredRoomFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+                "Ref": "GetFilteredRoomFunction"
+            }
+            }
+        },
+        "GetFilteredRoomFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+            "Action": "lambda:InvokeFunctionUrl",
+            "FunctionUrlAuthType": "NONE",
+            "FunctionName": {
+                "Ref": "GetFilteredRoomFunction"
+            },
+            "Principal": "*"
+            }
+        },
+        "RoomBookingFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+            "Handler": "index.handler",
+            "Role": "arn:aws:iam::149064047328:role/LabRole",
+            "Code": {
+                "S3Bucket": "dalvacationhome-35",
+                "S3Key": "create-feedback.zip"
+            },
+            "Runtime": "nodejs20.x"
+            }
+        },
+        "RoomBookingFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+                "Ref": "CreateFeedbackFunction"
+            }
+            }
+        },
+        "RoomBookingFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+            "Action": "lambda:InvokeFunctionUrl",
+            "FunctionUrlAuthType": "NONE",
+            "FunctionName": {
+                "Ref": "RoomBookingFunction"
+            },
+            "Principal": "*"
+            }
+        },
+        "UserBookingsFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+            "Handler": "index.handler",
+            "Role": "arn:aws:iam::149064047328:role/LabRole",
+            "Code": {
+                "S3Bucket": "dalvacationhome-35",
+                "S3Key": "get-user-bookings.zip"
+            },
+            "Runtime": "nodejs20.x"
+            }
+        },
+        "UserBookingsFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+                "Ref": "UserBookingsFunction"
+            }
+            }
+        },
+        "UserBookingsFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+            "Action": "lambda:InvokeFunctionUrl",
+            "FunctionUrlAuthType": "NONE",
+            "FunctionName": {
+                "Ref": "UserBookingsFunction"
+            },
+            "Principal": "*"
+            }
+        },
+        "CreateFeedbackFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+            "Handler": "index.handler",
+            "Role": "arn:aws:iam::149064047328:role/LabRole",
+            "Code": {
+                "S3Bucket": "dalvacationhome-35",
+                "S3Key": "create-feedback.zip"
+            },
+            "Runtime": "nodejs20.x"
+            }
+        },
+        "CreateFeedbackFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+                "Ref": "CreateFeedbackFunction"
+            }
+            }
+        },
+        "CreateFeedbackFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+            "Action": "lambda:InvokeFunctionUrl",
+            "FunctionUrlAuthType": "NONE",
+            "FunctionName": {
+                "Ref": "CreateFeedbackFunction"
+            },
+            "Principal": "*"
+            }
+        },
+        "SyncCognitoToDynamoTableFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+            "Handler": "index.handler",
+            "Role": "arn:aws:iam::149064047328:role/LabRole",
+            "Code": {
+                "S3Bucket": "dalvacationhome-35",
+                "S3Key": "sync_cognito_to_dynamo_table.zip"
+            },
+            "Runtime": "python3.12"
+            }
+        },
+        "SyncCognitoToDynamoTableFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+                "Ref": "SyncCognitoToDynamoTableFunction"
+            }
+            }
+        },
+        "SyncCognitoToDynamoTableFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+            "Action": "lambda:InvokeFunctionUrl",
+            "FunctionUrlAuthType": "NONE",
+            "FunctionName": {
+                "Ref": "SyncCognitoToDynamoTableFunction"
+            },
+            "Principal": "*"
+            }
+        },
         "DalvTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {

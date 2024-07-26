@@ -51,6 +51,7 @@ const AppRouter = ({ loggedInRole }) => {
                     path="/app/support"
                     element={
                         <PrivateRoute isAuthenticated={loggedInRole}>
+                            <NavBar />
                             <SupportChat />
                         </PrivateRoute>
                     }
