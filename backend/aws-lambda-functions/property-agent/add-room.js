@@ -17,14 +17,29 @@ exports.handler = async (event) => {
       ...room,
       amenities: new Set(room.amenities), 
       id: id,
+      overall_sentiment: null,
+      overall_score: null,
+      star_rating: null,
     };
-
+    
     const params = {
       TableName: "dalv",
       Item: newItem,
     };
 
+    const newAvailability = {
+      roomId:room.roomNumber,
+      availability: {},
+    }
+    const availability = {
+      TableName: "RoomAvailability",
+      Item: newAvailability,
+    }
+
+
     await ddbDocClient.send(new PutCommand(params));
+    //Add availability
+  await ddbDocClient.send(new PutCommand(availability));
 
     return {
       statusCode: 200,
