@@ -115,6 +115,26 @@ function NavBar() {
               >
                 Chat
               </Button>
+
+              <Button 
+                color="inherit" 
+                component={Link} 
+                to="/app/agent/dashboard"
+                sx={{ 
+                  mx: 2, 
+                  color: 'white', 
+                  fontSize: '1rem',
+                  borderBottom: location.pathname === '/app/agent/dashboard' ? '2px solid white' : '2px solid transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderBottom: '2px solid white',
+                  },
+                  transition: 'all 0.3s',
+                  padding: '6px 16px',
+                }}
+              >
+                Analytics
+              </Button>
             </Box>
           ) : userRole === 'client' ? (
             <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'right' }}>
