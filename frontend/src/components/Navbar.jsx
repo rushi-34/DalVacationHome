@@ -160,7 +160,7 @@ function NavBar() {
             </Box>
           ) : (null)}
 
-          <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{
+          {/* <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{
             alignSelf: 'right',
           }}>
             Feedbacks</Button>
@@ -188,7 +188,37 @@ function NavBar() {
                 Logout
               </CustomButton>
             )
-          }
+          } */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{ marginRight: 2 }}>
+              Feedbacks
+            </Button>
+            {!userRole && location.pathname === '/guest' && (
+              <Button color="inherit" variant="text" component={Link} to="/login" sx={{ marginRight: 2 }}>
+                Login
+              </Button>
+            )}
+            {!userRole && location.pathname === '/login' && (
+              <Button color="inherit" variant="text" component={Link} to="/guest" sx={{ marginRight: 2 }}>
+                Guest
+              </Button>
+            )}
+            {!userRole && location.pathname === '/feedbacks' && (
+              <Button color="inherit" variant="text" component={Link} to="/login" sx={{ marginRight: 2 }}>
+                Login
+              </Button>
+            )}
+            {userRole && (
+              <CustomButton
+                color="secondary"
+                variant="contained"
+                onClick={handleLogout}
+                sx={{ marginLeft: 2 }}
+              >
+                Logout
+              </CustomButton>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
     </ThemeProvider>
