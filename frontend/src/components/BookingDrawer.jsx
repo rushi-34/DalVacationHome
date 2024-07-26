@@ -33,9 +33,9 @@ const BookingDrawer = ({ open, onClose }) => {
             setLoading(false);
             return;
         }
-
         try {
             const payload = { user_id: user.getUsername() };
+            console.log('Payload:', payload);
             const response = await axios.post(BOOKINGS_URL, payload); // Fetch bookings from the server
             setBookings(response.data); // Update the bookings state
         } catch (err) {
