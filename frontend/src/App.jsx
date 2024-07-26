@@ -68,6 +68,15 @@ const AppRouter = ({ loggedInRole }) => {
                             }
                         />
                         <Route
+                            path="/app/agent/dashboard"
+                            element={
+                                <PrivateRoute isAuthenticated={loggedInRole}>
+                                    <NavBar />
+                                    <AgentDashboard />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
                             path="/app/agent/add-room"
                             element={
                                 <PrivateRoute isAuthenticated={loggedInRole}>
