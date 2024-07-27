@@ -17,6 +17,7 @@ import SupportChat from "./pages/SupportChat";
 import ClientHome from "./pages/ClientHome";
 import ChatBot from "./pages/ChatBot";
 import Guest from "./pages/Guest";
+import Feedbacks from "./pages/Feedbacks";
 
 const PrivateRoute = ({ children, isAuthenticated }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
@@ -28,6 +29,7 @@ const AppRouter = ({ loggedInRole }) => {
             <Routes>
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/register" element={<Signup />} />
+                <Route path="/feedbacks" element={<Feedbacks />} />
 
                 <Route
                     path="/"

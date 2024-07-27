@@ -8,7 +8,7 @@ import { Box } from '@mui/system';
 import { logout } from "../CognitoHelper";
 import CustomButton from './CustomButton';
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthenticationContext } from "../ContextProvider";
 import ConcernModal from './ConcernModal';
@@ -35,6 +35,7 @@ function NavBar() {
   const location = useLocation();
   const [openConcernModal, setOpenConcernModal] = useState(false);
 
+  const navigate = useNavigate();
   const handleOpenConcernModal = () => setOpenConcernModal(true);
   const handleCloseConcernModal = () => setOpenConcernModal(false);
 
@@ -49,9 +50,9 @@ function NavBar() {
       <AppBar position="static" color="primary" elevation={0}>
         <Toolbar sx={{ justifyContent: 'space-between', padding: '0 24px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', marginRight: 1, color: 'white' }}>
+            <Button color="inherit" variant="text" component={Link} to="/" sx={{ fontSize: "24px", fontWeight: "bold" }}>
               DAL
-            </Typography>
+            </Button>
             <Typography variant="h6" component="div" sx={{ color: 'white' }}>
               VacationHome
             </Typography>
@@ -116,15 +117,13 @@ function NavBar() {
                 Chat
               </Button>
 
-              <Button 
-                color="inherit" 
-                component={Link} 
-<<<<<<< HEAD
-=======
+              <Button
+                color="inherit"
+                component={Link}
                 to="/app/agent/dashboard"
-                sx={{ 
-                  mx: 2, 
-                  color: 'white', 
+                sx={{
+                  mx: 2,
+                  color: 'white',
                   fontSize: '1rem',
                   borderBottom: location.pathname === '/app/agent/dashboard' ? '2px solid white' : '2px solid transparent',
                   '&:hover': {
@@ -163,6 +162,10 @@ function NavBar() {
             </Box>
           ) : (null)}
 
+          {/* <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{
+            alignSelf: 'right',
+          }}>
+            Feedbacks</Button>
           {
             !userRole && location.pathname === '/guest' ? (
               <Button color="inherit" variant="text" component={Link} to="/login">
@@ -171,6 +174,10 @@ function NavBar() {
             ) : !userRole && location.pathname === '/login' ? (
               <Button color="inherit" variant="text" component={Link} to="/guest">
                 Guest
+              </Button>
+            ) : !userRole && location.pathname === '/feedbacks' ? (
+              <Button color="inherit" variant="text" component={Link} to="/login">
+                Login
               </Button>
             ) : (
               console.log(auth),
@@ -183,7 +190,37 @@ function NavBar() {
                 Logout
               </CustomButton>
             )
-          }
+          } */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button color="inherit" variant="text" component={Link} to="/feedbacks" sx={{ marginRight: 2 }}>
+              Feedbacks
+            </Button>
+            {!userRole && location.pathname === '/guest' && (
+              <Button color="inherit" variant="text" component={Link} to="/login" sx={{ marginRight: 2 }}>
+                Login
+              </Button>
+            )}
+            {!userRole && location.pathname === '/login' && (
+              <Button color="inherit" variant="text" component={Link} to="/guest" sx={{ marginRight: 2 }}>
+                Guest
+              </Button>
+            )}
+            {!userRole && location.pathname === '/feedbacks' && (
+              <Button color="inherit" variant="text" component={Link} to="/login" sx={{ marginRight: 2 }}>
+                Login
+              </Button>
+            )}
+            {userRole && (
+              <CustomButton
+                color="secondary"
+                variant="contained"
+                onClick={handleLogout}
+                sx={{ marginLeft: 2 }}
+              >
+                Logout
+              </CustomButton>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
     </ThemeProvider>
