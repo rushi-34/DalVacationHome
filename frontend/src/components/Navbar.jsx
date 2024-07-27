@@ -8,7 +8,7 @@ import { Box } from '@mui/system';
 import { logout } from "../CognitoHelper";
 import CustomButton from './CustomButton';
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthenticationContext } from "../ContextProvider";
 import ConcernModal from './ConcernModal';
@@ -35,6 +35,7 @@ function NavBar() {
   const location = useLocation();
   const [openConcernModal, setOpenConcernModal] = useState(false);
 
+  const navigate = useNavigate();
   const handleOpenConcernModal = () => setOpenConcernModal(true);
   const handleCloseConcernModal = () => setOpenConcernModal(false);
 
@@ -49,9 +50,9 @@ function NavBar() {
       <AppBar position="static" color="primary" elevation={0}>
         <Toolbar sx={{ justifyContent: 'space-between', padding: '0 24px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', marginRight: 1, color: 'white' }}>
+            <Button color="inherit" variant="text" component={Link} to="/" sx={{ fontSize: "24px", fontWeight: "bold" }}>
               DAL
-            </Typography>
+            </Button>
             <Typography variant="h6" component="div" sx={{ color: 'white' }}>
               VacationHome
             </Typography>
