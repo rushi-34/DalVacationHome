@@ -1,0 +1,1674 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "AWS Initial Infrastructure",
+    "Resources": {
+        "DalVacationPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+                "UserPoolName": "DalVacationPool",
+                "AliasAttributes": [
+                    "preferred_username"
+                ],
+                "AutoVerifiedAttributes": [
+                    "email"
+                ],
+                "MfaConfiguration": "OFF",
+                "Policies": {
+                    "PasswordPolicy": {
+                        "MinimumLength": 8,
+                        "RequireUppercase": true,
+                        "RequireLowercase": true,
+                        "RequireNumbers": true,
+                        "RequireSymbols": true
+                    }
+                },
+                "AccountRecoverySetting": {
+                    "RecoveryMechanisms": [
+                        {
+                            "Name": "verified_email",
+                            "Priority": 1
+                        }
+                    ]
+                },
+                "Schema": [
+                    {
+                        "Name": "role",
+                        "AttributeDataType": "String",
+                        "Mutable": true
+                    },
+                    {
+                        "Name": "sns_topic_arn",
+                        "AttributeDataType": "String",
+                        "Mutable": true
+                    }
+                ],
+                "LambdaConfig": {
+                    "CreateAuthChallenge": "arn:aws:lambda:us-east-1:845434235447:function:CreateAuthChallengeIac",
+                    "DefineAuthChallenge": "arn:aws:lambda:us-east-1:845434235447:function:DefineAuthChallengeIac",
+                    "PostAuthentication": "arn:aws:lambda:us-east-1:845434235447:function:PostAuthTriggerIac",
+                    "PostConfirmation": "arn:aws:lambda:us-east-1:845434235447:function:PostConfTriggerIac",
+                    "PreSignUp": "arn:aws:lambda:us-east-1:845434235447:function:PreSignupTriggerIac",
+                    "VerifyAuthChallengeResponse": "arn:aws:lambda:us-east-1:845434235447:function:VerifyAuthChallengeIac"
+                },
+                "EmailConfiguration": {
+                    "EmailSendingAccount": "COGNITO_DEFAULT"
+                }
+            }
+        },
+        "DalVacationPoolClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+                "ClientName": "DalVacationPoolClient",
+                "UserPoolId": {
+                    "Ref": "DalVacationPool"
+                },
+                "ExplicitAuthFlows": [
+                    "ALLOW_CUSTOM_AUTH",
+                    "ALLOW_USER_SRP_AUTH",
+                    "ALLOW_REFRESH_TOKEN_AUTH"
+                ]
+            }
+        },
+        "AddRoomLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "add-room.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "AddRoomLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "AddRoomLambdaFunction"
+                }
+            }
+        },
+        "AddRoomLambdaFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "AddRoomLambdaFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "CreateAuthLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "create-auth.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "CreateAuthLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "CreateAuthLambdaFunction"
+                }
+            }
+        },
+        "CreateAuthLambdaFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "CreateAuthLambdaFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "DefineAuthFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "define-auth.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "DefineAuthFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "DefineAuthFunction"
+                }
+            }
+        },
+        "DefineAuthFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "DefineAuthFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "DeleteRoomLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "delete-room.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "DeleteRoomLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "DeleteRoomLambdaFunction"
+                }
+            }
+        },
+        "DeleteRoomLambdaFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "DeleteRoomLambdaFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetAllRoomLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-all-room.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "GetAllRoomLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetAllRoomLambdaFunction"
+                }
+            }
+        },
+        "GetAllRoomLambdaFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetAllRoomLambdaFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetQuestionBankLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-question-bank.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "GetQuestionBankLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetQuestionBankLambdaFunction"
+                }
+            }
+        },
+        "GetQuestionBankLambdaFunctionPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetQuestionBankLambdaFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetRoomByIdFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-room-by-id.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "GetRoomByIdFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetRoomByIdFunction"
+                }
+            }
+        },
+        "GetRoomByIdFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetRoomByIdFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetUserAttrFromCognitoFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-user-attribute-from-cognito.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "GetUserAttrFromCognitoFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetUserAttrFromCognitoFunction"
+                }
+            }
+        },
+        "GetUserAttrFromCognitoFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetUserAttrFromCognitoFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "PostAuthFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "post-authentication.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "PostAuthFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "PostAuthFunction"
+                }
+            }
+        },
+        "PostAuthFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "PostAuthFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "PreSignUpFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "pre-signup.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "PreSignUpFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "PreSignUpFunction"
+                }
+            }
+        },
+        "PreSignUpFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "PreSignUpFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "UpdateRoomFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "update-room.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "UpdateRoomFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "UpdateRoomFunction"
+                }
+            }
+        },
+        "UpdateRoomFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "UpdateRoomFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "UploadRoomImageFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "upload-room-image.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "UploadRoomImageFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "UploadRoomImageFunction"
+                }
+            }
+        },
+        "UploadRoomImageFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "UploadRoomImageFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "VerifyAuthFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "verify-auth.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "VerifyAuthFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "VerifyAuthFunction"
+                }
+            }
+        },
+        "VerifyAuthFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "VerifyAuthFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetAllChatsFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-all-chats.zip"
+                },
+                "Runtime": "python3.12"
+            }
+        },
+        "GetAllChatsFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetAllChatsFunction"
+                }
+            }
+        },
+        "GetAllChatsFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetAllChatsFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "MessagePassingFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "message-passing.zip"
+                },
+                "Runtime": "python3.12"
+            }
+        },
+        "MessagePassingFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "MessagePassingFunction"
+                }
+            }
+        },
+        "MessagePassingFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "MessagePassingFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "GetFilteredRoomFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-filtered-rooms.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "GetFilteredRoomFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "GetFilteredRoomFunction"
+                }
+            }
+        },
+        "GetFilteredRoomFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "GetFilteredRoomFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "RoomBookingFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "dalvac-room-booking.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "RoomBookingFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "RoomBookingFunction"
+                }
+            }
+        },
+        "RoomBookingFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "RoomBookingFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "UserBookingsFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "get-user-bookings.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "UserBookingsFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "UserBookingsFunction"
+                }
+            }
+        },
+        "UserBookingsFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "UserBookingsFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "CreateFeedbackFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "create-feedback.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "CreateFeedbackFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "CreateFeedbackFunction"
+                }
+            }
+        },
+        "CreateFeedbackFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "CreateFeedbackFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "SyncCognitoToDynamoTableFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "sync_cognito_to_dynamo_table.zip"
+                },
+                "Runtime": "python3.12"
+            }
+        },
+        "SyncCognitoToDynamoTableFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "SyncCognitoToDynamoTableFunction"
+                }
+            }
+        },
+        "SyncCognitoToDynamoTableFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "SyncCognitoToDynamoTableFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "MyHotelMailerFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::149064047328:role/LabRole",
+                "Code": {
+                    "S3Bucket": "dalvachome-35",
+                    "S3Key": "my-hotel-mailer.zip"
+                },
+                "Runtime": "nodejs20.x"
+            }
+        },
+        "MyHotelMailerFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                    "Ref": "MyHotelMailerFunction"
+                }
+            }
+        },
+        "MyHotelMailerFunctionUrlPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionUrlAuthType": "NONE",
+                "FunctionName": {
+                    "Ref": "MyHotelMailerFunction"
+                },
+                "Principal": "*"
+            }
+        },
+        "DalvTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "dalv",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "NavigateDetailsTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "navigateDetailsTable",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "action",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "action",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "QuestionBankTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "question_bank",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "q_id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "q_id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "SecurityQuestionsTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "security_questions",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "username",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "username",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "CaesarKeyTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "caesar_key",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "username",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "username",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "DalVacSupportTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "dalvac-support",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "booking_id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "booking_id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            }
+        },
+        "DalVacHomeAPIGateway": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+                "Name": "DalVacHomeAPIGateway"
+            }
+        },
+        "CreateFeedbackResource": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "DalVacHomeAPIGateway",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "create-feedback"
+            }
+        },
+        "RoomBookingResource": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "DalVacHomeAPIGateway",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "dalvac-room-booking"
+            }
+        },
+        "GetAllRoomsResource": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "DalVacHomeAPIGateway",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "get-all-rooms"
+            }
+        },
+        "UserBookingsResource": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "DalVacHomeAPIGateway",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "get-user-bookings"
+            }
+        },
+        "MyHotelMailerResource": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "DalVacHomeAPIGateway",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "my-hotel-mailer"
+            }
+        },
+        "CreateFeedbackMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "POST",
+                "ResourceId": {
+                    "Ref": "CreateFeedbackResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "IntegrationHttpMethod": "POST",
+                    "Type": "AWS_PROXY",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "CreateFeedbackFunction",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        }
+                    }
+                ]
+            }
+        },
+        "RoomBookingMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "POST",
+                "ResourceId": {
+                    "Ref": "RoomBookingResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "IntegrationHttpMethod": "POST",
+                    "Type": "AWS_PROXY",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "RoomBookingFunction",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        }
+                    }
+                ]
+            }
+        },
+        "GetAllRoomsMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "GET",
+                "ResourceId": {
+                    "Ref": "GetAllRoomsResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "IntegrationHttpMethod": "POST",
+                    "Type": "AWS_PROXY",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "GetAllRoomLambdaFunction",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        }
+                    }
+                ]
+            }
+        },
+        "UserBookingsMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "POST",
+                "ResourceId": {
+                    "Ref": "UserBookingsResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "IntegrationHttpMethod": "POST",
+                    "Type": "AWS_PROXY",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "UserBookingsFunction",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        }
+                    }
+                ]
+            }
+        },
+        "MyHotelMailerMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "ANY",
+                "ResourceId": {
+                    "Ref": "MyHotelMailerResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "IntegrationHttpMethod": "POST",
+                    "Type": "AWS_PROXY",
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "MyHotelMailerFunction",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        }
+                    }
+                ]
+            }
+        },
+        "OptionsMyHotelMailerApiGatewayMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "OPTIONS",
+                "ResourceId": {
+                    "Ref": "MyHotelMailerResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "MOCK",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200,
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            },
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    ],
+                    "PassthroughBehavior": "WHEN_NO_MATCH",
+                    "RequestTemplates": {
+                        "application/json": "{\"statusCode\": 200}"
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        },
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Headers": true,
+                            "method.response.header.Access-Control-Allow-Methods": true,
+                            "method.response.header.Access-Control-Allow-Origin": true
+                        }
+                    }
+                ]
+            }
+        },
+        "OptionsUserBookingsApiGatewayMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "OPTIONS",
+                "ResourceId": {
+                    "Ref": "UserBookingsResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "MOCK",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200,
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            },
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    ],
+                    "PassthroughBehavior": "WHEN_NO_MATCH",
+                    "RequestTemplates": {
+                        "application/json": "{\"statusCode\": 200}"
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        },
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Headers": true,
+                            "method.response.header.Access-Control-Allow-Methods": true,
+                            "method.response.header.Access-Control-Allow-Origin": true
+                        }
+                    }
+                ]
+            }
+        },
+        "OptionsGetAllRoomsApiGatewayMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "OPTIONS",
+                "ResourceId": {
+                    "Ref": "GetAllRoomsResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "MOCK",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200,
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            },
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    ],
+                    "PassthroughBehavior": "WHEN_NO_MATCH",
+                    "RequestTemplates": {
+                        "application/json": "{\"statusCode\": 200}"
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        },
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Headers": true,
+                            "method.response.header.Access-Control-Allow-Methods": true,
+                            "method.response.header.Access-Control-Allow-Origin": true
+                        }
+                    }
+                ]
+            }
+        },
+        "OptionsRoomBookingApiGatewayMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "OPTIONS",
+                "ResourceId": {
+                    "Ref": "RoomBookingResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "MOCK",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200,
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            },
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    ],
+                    "PassthroughBehavior": "WHEN_NO_MATCH",
+                    "RequestTemplates": {
+                        "application/json": "{\"statusCode\": 200}"
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        },
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Headers": true,
+                            "method.response.header.Access-Control-Allow-Methods": true,
+                            "method.response.header.Access-Control-Allow-Origin": true
+                        }
+                    }
+                ]
+            }
+        },
+        "OptionsCreateFeedbackApiGatewayMethod": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "HttpMethod": "OPTIONS",
+                "ResourceId": {
+                    "Ref": "CreateFeedbackResource"
+                },
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "MOCK",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200,
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            },
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    ],
+                    "PassthroughBehavior": "WHEN_NO_MATCH",
+                    "RequestTemplates": {
+                        "application/json": "{\"statusCode\": 200}"
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200,
+                        "ResponseModels": {
+                            "application/json": "Empty"
+                        },
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Headers": true,
+                            "method.response.header.Access-Control-Allow-Methods": true,
+                            "method.response.header.Access-Control-Allow-Origin": true
+                        }
+                    }
+                ]
+            }
+        },
+        "DalVacHomeAPIGatewayDeployment": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "DalVacHomeAPIGateway"
+                },
+                "StageName": "prod"
+            },
+            "DependsOn": [
+                "CreateFeedbackMethod",
+                "RoomBookingMethod",
+                "GetAllRoomsMethod",
+                "UserBookingsMethod",
+                "MyHotelMailerMethod",
+                "OptionsMyHotelMailerApiGatewayMethod",
+                "OptionsUserBookingsApiGatewayMethod",
+                "OptionsGetAllRoomsApiGatewayMethod",
+                "OptionsRoomBookingApiGatewayMethod",
+                "OptionsCreateFeedbackApiGatewayMethod"
+            ]
+        },
+        "CreateFeedbackFunctionLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "DependsOn": "CreateFeedbackFunction",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/aws/lambda/",
+                            {
+                                "Ref": "CreateFeedbackFunction"
+                            }
+                        ]
+                    ]
+                },
+                "RetentionInDays": 14
+            }
+        },
+        "RoomBookingFunctionLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "DependsOn": "RoomBookingFunction",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/aws/lambda/",
+                            {
+                                "Ref": "RoomBookingFunction"
+                            }
+                        ]
+                    ]
+                },
+                "RetentionInDays": 14
+            }
+        },
+        "GetAllRoomsFunctionLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "DependsOn": "GetAllRoomLambdaFunction",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/aws/lambda/",
+                            {
+                                "Ref": "GetAllRoomLambdaFunction"
+                            }
+                        ]
+                    ]
+                },
+                "RetentionInDays": 14
+            }
+        },
+        "UserBookingsFunctionLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "DependsOn": "UserBookingsFunction",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/aws/lambda/",
+                            {
+                                "Ref": "UserBookingsFunction"
+                            }
+                        ]
+                    ]
+                },
+                "RetentionInDays": 14
+            }
+        },
+        "MyHotelMailerFunctionLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "DependsOn": "MyHotelMailerFunction",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+                "LogGroupName": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "/aws/lambda/",
+                            {
+                                "Ref": "MyHotelMailerFunction"
+                            }
+                        ]
+                    ]
+                },
+                "RetentionInDays": 14
+            }
+        },
+        "CreateFeedbackLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunction",
+                "FunctionName": {
+                    "Ref": "CreateFeedbackFunction"
+                },
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:execute-api:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                                "Ref": "DalVacHomeAPIGateway"
+                            },
+                            "/*/POST/create-feedback"
+                        ]
+                    ]
+                }
+            }
+        },
+        "RoomBookingLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunction",
+                "FunctionName": {
+                    "Ref": "RoomBookingFunction"
+                },
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:execute-api:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                                "Ref": "DalVacHomeAPIGateway"
+                            },
+                            "/*/POST/dalvac-room-booking"
+                        ]
+                    ]
+                }
+            }
+        },
+        "GetAllRoomsLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunction",
+                "FunctionName": {
+                    "Ref": "GetAllRoomLambdaFunction"
+                },
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:execute-api:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                                "Ref": "DalVacHomeAPIGateway"
+                            },
+                            "/*/GET/get-all-rooms"
+                        ]
+                    ]
+                }
+            }
+        },
+        "UserBookingsLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunction",
+                "FunctionName": {
+                    "Ref": "UserBookingsFunction"
+                },
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:execute-api:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                                "Ref": "DalVacHomeAPIGateway"
+                            },
+                            "/*/POST/get-user-bookings"
+                        ]
+                    ]
+                }
+            }
+        },
+        "MyHotelMailerLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunction",
+                "FunctionName": {
+                    "Ref": "MyHotelMailerFunction"
+                },
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:execute-api:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                                "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                                "Ref": "DalVacHomeAPIGateway"
+                            },
+                            "/*/ANY/my-hotel-mailer"
+                        ]
+                    ]
+                }
+            }
+        }
+    }
+}
